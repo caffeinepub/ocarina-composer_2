@@ -1,90 +1,50 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T09:34:41.123Z",
+  "generatedAt": "2026-02-24T10:25:50.313Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 7,
-    "implemented": 5,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-38",
-        "summary": "Extend the PianoKeyboard component to include C6 note (one octave higher than the current highest note), maintaining the existing piano keyboard layout and functionality",
+        "id": "REQ-49",
+        "summary": "Add a clearly visible 'Position Holes' button directly on or immediately below the OcarinaVisual play-along component in the main App layout, so users can access hole positioning without navigating into the Settings modal.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/PianoKeyboard.tsx"
+          "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/PianoKeyboard.tsx"
+          "frontend/src/App.tsx"
         ]
       },
       {
-        "id": "REQ-39",
-        "summary": "Add C6 note to the default fingering chart with all 4 holes open on the ocarina, defining it as the highest note in the octave range",
+        "id": "REQ-50",
+        "summary": "When the 'Position Holes' button is clicked, open the HolePositioningEditor component as a modal or inline overlay directly on the OcarinaVisual component, so the user can drag and reposition each of the 4 holes (left index, left middle, right index, right middle) on the current ocarina background (stock photo or uploaded photo) without leaving the main view.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/types/fingering.ts",
-          "frontend/src/utils/defaultFingeringChart.ts",
-          "frontend/src/components/FingeringEditor.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/components/HolePositioningEditor.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/types/fingering.ts",
-          "frontend/src/utils/defaultFingeringChart.ts",
-          "frontend/src/components/FingeringEditor.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/components/HolePositioningEditor.tsx"
         ]
       },
       {
-        "id": "REQ-40",
-        "summary": "Update CompositionControls playback to support C6 note with synthesized ocarina-style tone at the correct frequency",
+        "id": "REQ-51",
+        "summary": "Ensure the HolePositioningEditor opened from the OcarinaVisual context uses the stock grey ocarina image as the background by default when no user photo has been uploaded, matching the background currently displayed by OcarinaVisual, so the user can visually align holes to the actual image.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/CompositionControls.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/components/HolePositioningEditor.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/CompositionControls.tsx"
-        ]
-      },
-      {
-        "id": "REQ-41",
-        "summary": "Update SheetMusic component to display C6 note with proper sheet music notation on the staff",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/SheetMusic.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/SheetMusic.tsx"
-        ]
-      },
-      {
-        "id": "REQ-42",
-        "summary": "Update OcarinaTablature component to render C6 note showing all 4 holes open (unfilled circles) in the 2x2 layout",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/components/OcarinaTablature.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-43",
-        "summary": "Update OcarinaVisual play-along component to display C6 note with all 4 holes open (invisible or unfilled) during playback",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/components/OcarinaVisual.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-44",
-        "summary": "Remove the 'Lyrics' placeholder text from SheetMusic component and replace it with a '+' button that appears under each note when no lyrics text has been entered",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/SheetMusic.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/SheetMusic.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/components/HolePositioningEditor.tsx"
         ]
       }
     ]
@@ -94,12 +54,11 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/CompositionControls.tsx",
-    "frontend/src/components/FingeringEditor.tsx",
-    "frontend/src/components/PianoKeyboard.tsx",
-    "frontend/src/components/SheetMusic.tsx",
-    "frontend/src/types/fingering.ts",
-    "frontend/src/utils/defaultFingeringChart.ts",
+    "frontend/src/App.tsx",
+    "frontend/src/components/HolePositioningEditor.tsx",
+    "frontend/src/components/OcarinaSettings.tsx",
+    "frontend/src/components/OcarinaVisual.tsx",
+    "frontend/src/hooks/useModelRotation.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

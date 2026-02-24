@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { useOcarinaColors } from '../hooks/useOcarinaColors';
 import { useOcarinaPhoto } from '../hooks/useOcarinaPhoto';
 import { useCustomHolePositions } from '../hooks/useCustomHolePositions';
+import { useModelRotation } from '../hooks/useModelRotation';
 import type { HoleShape, BodyShape } from '../App';
 import type { FingeringChart } from '../types/fingering';
 
@@ -12,12 +13,12 @@ interface OcarinaVisualProps {
   fingeringChart?: FingeringChart;
 }
 
-export default function OcarinaVisual({ currentNote, holeShape, bodyShape, fingeringChart }: OcarinaVisualProps) {
+export default function OcarinaVisual({ currentNote, holeShape, fingeringChart }: OcarinaVisualProps) {
   const pattern = currentNote && fingeringChart ? fingeringChart[currentNote] : null;
   const { colors } = useOcarinaColors();
   const { photoUrl } = useOcarinaPhoto();
-  // Always use round body shape for play-along visual to match tablature
   const { positions } = useCustomHolePositions('round');
+  const { rotation } = useModelRotation();
 
   const getHoleShapeClass = (shape: HoleShape) => {
     switch (shape) {
@@ -51,8 +52,11 @@ export default function OcarinaVisual({ currentNote, holeShape, bodyShape, finge
       </p>
 
       <div className="flex justify-center">
-        <div className="relative -rotate-90">
-          {/* Ocarina body - always round for play-along */}
+        <div
+          className="relative"
+          style={{ transform: `rotate(${rotation}deg)`, transition: 'transform 0.3s ease' }}
+        >
+          {/* Ocarina body */}
           <div
             className={cn(
               'w-96 h-56 shadow-2xl relative overflow-hidden',
@@ -69,7 +73,6 @@ export default function OcarinaVisual({ currentNote, holeShape, bodyShape, finge
             {!photoUrl && (
               <>
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-full" />
-                {/* Body outline */}
                 <div
                   className="absolute inset-0 border-4 rounded-full"
                   style={{ borderColor: colors.bodyOutline }}
@@ -77,7 +80,7 @@ export default function OcarinaVisual({ currentNote, holeShape, bodyShape, finge
               </>
             )}
 
-            {/* Mouthpiece at the front center (only for non-photo) */}
+            {/* Mouthpiece (only for non-photo) */}
             {!photoUrl && (
               <div
                 className="absolute -left-10 top-1/2 -translate-y-1/2 w-20 h-16 rounded-l-full shadow-lg border-r-2"
@@ -86,12 +89,11 @@ export default function OcarinaVisual({ currentNote, holeShape, bodyShape, finge
                   borderRightColor: colors.bodyOutline,
                 }}
               >
-                {/* Air intake opening */}
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-8 bg-gray-900 rounded-full shadow-inner" />
               </div>
             )}
 
-            {/* Holes - using consistent positions from round body shape */}
+            {/* Holes */}
             {(['leftIndex', 'leftMiddle', 'rightIndex', 'rightMiddle'] as const).map((holeId) => {
               const pos = positions[holeId];
               const isCovered = pattern && pattern[holeId];

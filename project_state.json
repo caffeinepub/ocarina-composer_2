@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 19,
+  "projectStateVersion": 25,
   "summary": "4-hole ocarina tablature music writing app with standard sheet music notation, piano keyboard interface, note editing, lyrics support, ocarina sound playback, and visual fingering illustrations",
   "architectural_notes": [
     "Support notes A-G plus sharps for 4-hole ocarina range",
@@ -328,6 +328,62 @@
         "REQ-44"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-reorganize-the-main-app-layout-so-the-ocarinavisual-component-play-along-ocarina-model-appears-at-the-top-of-the-page-followed-immediately-by-the-compositioncontrols-playback-controls-and-pianokeyboard-with-sheetmusic-and-other-panels-below",
+      "title": "Reorganize the main App layout so the OcarinaVisual component (play-along ocarina model) appears at the top of the page, followed immediately by the CompositionControls (playback controls) and PianoKeyboard, with SheetMusic and other panels below.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-a-stock-grey-ocarina-illustration-image-to-use-as-the-default-visual-background-for-the-ocarinavisual-component-when-no-user-photo-has-been-uploaded-the-image-should-depict-a-round-grey-ceramic-ocarina-viewed-from-above-with-a-natural-stone-like-texture",
+      "title": "Generate a stock grey ocarina illustration image to use as the default visual background for the OcarinaVisual component when no user photo has been uploaded. The image should depict a round grey ceramic ocarina viewed from above, with a natural stone-like texture.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-when-the-stock-grey-ocarina-photo-is-used-as-the-ocarinavisual-background-apply-the-current-fingering-chart-hole-positions-from-usecustomholepositions-so-the-4-interactive-holes-are-pre-positioned-correctly-on-the-stock-image-matching-the-standard-round-ocarina-layout-the-hole-positions-should-be-calibrated-to-align-with-the-ocarina-body-in-the-stock-image",
+      "title": "When the stock grey ocarina photo is used as the OcarinaVisual background, apply the current fingering chart hole positions (from useCustomHolePositions) so the 4 interactive holes are pre-positioned correctly on the stock image, matching the standard round ocarina layout. The hole positions should be calibrated to align with the ocarina body in the stock image.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-rotation-transform-applied-to-the-ocarinavisual-play-along-component-from-90-counterclockwise-to-90-clockwise-i-e-change-the-css-transform-from-rotate-90deg-to-rotate-90deg-so-the-mouthpiece-faces-the-top-of-the-screen-instead-of-the-bottom",
+      "title": "Update the rotation transform applied to the OcarinaVisual play-along component from 90° counterclockwise to 90° clockwise (i.e., change the CSS transform from `rotate(-90deg)` to `rotate(90deg)`), so the mouthpiece faces the top of the screen instead of the bottom.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-clearly-visible-position-holes-button-directly-on-or-immediately-below-the-ocarinavisual-play-along-component-in-the-main-app-layout-so-users-can-access-hole-positioning-without-navigating-into-the-settings-modal",
+      "title": "Add a clearly visible 'Position Holes' button directly on or immediately below the OcarinaVisual play-along component in the main App layout, so users can access hole positioning without navigating into the Settings modal.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-when-the-position-holes-button-is-clicked-open-the-holepositioningeditor-component-as-a-modal-or-inline-overlay-directly-on-the-ocarinavisual-component-so-the-user-can-drag-and-reposition-each-of-the-4-holes-left-index-left-middle-right-index-right-middle-on-the-current-ocarina-background-stock-photo-or-uploaded-photo-without-leaving-the-main-view",
+      "title": "When the 'Position Holes' button is clicked, open the HolePositioningEditor component as a modal or inline overlay directly on the OcarinaVisual component, so the user can drag and reposition each of the 4 holes (left index, left middle, right index, right middle) on the current ocarina background (stock photo or uploaded photo) without leaving the main view.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-holepositioningeditor-opened-from-the-ocarinavisual-context-uses-the-stock-grey-ocarina-image-as-the-background-by-default-when-no-user-photo-has-been-uploaded-matching-the-background-currently-displayed-by-ocarinavisual-so-the-user-can-visually-align-holes-to-the-actual-image",
+      "title": "Ensure the HolePositioningEditor opened from the OcarinaVisual context uses the stock grey ocarina image as the background by default when no user photo has been uploaded, matching the background currently displayed by OcarinaVisual, so the user can visually align holes to the actual image.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -531,6 +587,12 @@
       "reqIds": [
         "REQ-43"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "Rotate the fingering model (OcarinaVisual play-along component) 90° clockwise (to the right)",
+      "reqIds": [],
       "status": "pending"
     }
   ],

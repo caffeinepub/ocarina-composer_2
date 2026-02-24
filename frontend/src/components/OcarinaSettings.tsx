@@ -9,6 +9,7 @@ import HolePositioningEditor from './HolePositioningEditor';
 import { useOcarinaColors } from '../hooks/useOcarinaColors';
 import { useOcarinaPhoto } from '../hooks/useOcarinaPhoto';
 import { useCustomHolePositions } from '../hooks/useCustomHolePositions';
+import { useModelRotation } from '../hooks/useModelRotation';
 import type { HoleShape, BodyShape } from '../App';
 import type { FingeringChart, FingeringPattern } from '../types/fingering';
 import { toast } from 'sonner';
@@ -36,6 +37,7 @@ export default function OcarinaSettings({
   const { colors, setHoleFill, setHoleStroke, setBodyFill, setBodyOutline, resetToDefaults } = useOcarinaColors();
   const { photoUrl, uploadPhoto, removePhoto } = useOcarinaPhoto();
   const { positions, setPosition, resetToDefaults: resetPositions } = useCustomHolePositions(bodyShape);
+  const { rotation, setRotation } = useModelRotation();
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -257,8 +259,10 @@ export default function OcarinaSettings({
                 photoUrl={photoUrl}
                 holeShape={holeShape}
                 positions={positions}
+                rotation={rotation}
                 onPositionChange={setPosition}
                 onReset={resetPositions}
+                onRotationChange={setRotation}
               />
             </div>
           )}

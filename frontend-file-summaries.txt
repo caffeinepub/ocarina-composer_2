@@ -1,18 +1,18 @@
 {
-  "frontend/src/App.tsx": "Main application component managing composition state, playback, hole/body shape preferences, custom fingering chart with localStorage persistence, and settings dialog state with a Settings button that opens OcarinaSettings as a modal popup.",
+  "frontend/src/App.tsx": "Main app component with a new \"Position Holes & Rotation\" button below OcarinaVisual that opens HolePositioningEditor in a Dialog modal, wired to useOcarinaPhoto, useCustomHolePositions, and useModelRotation hooks.",
   "frontend/src/components/Header.tsx": "Application header with branding, logo, and title for the Ocarina Composer.",
   "frontend/src/components/Footer.tsx": "Footer component with copyright and attribution link to caffeine.ai with UTM tracking.",
   "frontend/src/components/PianoKeyboard.tsx": "Interactive piano keyboard component with white and black keys for note input, now including C6 as an additional white key, styled to look like a real piano.",
   "frontend/src/components/SheetMusic.tsx": "Sheet music display with standard notation, note symbols, ocarina tablature with custom fingering support, lyrics editing with \"+\" button placeholder instead of \"Lyrics\" text, and note selection/deletion functionality.",
   "frontend/src/components/OcarinaTablature.tsx": "Compact tablature notation displaying 4-hole ocarina fingering in a 2x2 grid with customizable hole shapes and colors from useOcarinaColors hook, supporting C6 with all holes open.",
-  "frontend/src/components/OcarinaVisual.tsx": "Large visual representation of a 4-hole ocarina with customizable hole shapes and colors, optional photo background, always using round body shape for play-along consistency with tablature, 90° counterclockwise rotation for proper alignment, and play-along visualization showing covered holes during playback including C6 support.",
+  "frontend/src/components/OcarinaVisual.tsx": "Updated OcarinaVisual that reads rotation from the useModelRotation hook and applies it via inline style transform instead of the hardcoded rotate-90 class, keeping all other visual logic intact.",
   "frontend/src/components/CompositionControls.tsx": "Control panel for selecting note duration, playing/stopping composition with Web Audio API synthesis including C6 at 1046.50 Hz, and clearing the composition.",
   "frontend/src/components/SongMetadata.tsx": "Form for entering song title and description with save functionality and backend status alert.",
   "frontend/src/lib/utils.ts": "Utility function for merging Tailwind CSS classes using clsx and tailwind-merge.",
   "frontend/src/hooks/useQueries.ts": "React Query hooks for backend integration (placeholder for future implementation).",
   "frontend/src/index.css": "Global styles with OKLCH color system using warm amber/orange tones for a natural, musical aesthetic appropriate for an ocarina app.",
   "frontend/tailwind.config.js": "Tailwind configuration with custom fonts (Poppins display font), extended color tokens, and design system settings.",
-  "frontend/src/components/OcarinaSettings.tsx": "Settings component with hole shape selector, body shape selector, color customization, photo upload interface, hole positioning editor, and fingering configuration button, now accepting an optional onClose callback for modal usage.",
+  "frontend/src/components/OcarinaSettings.tsx": "Settings component with hole/body shape selectors, color customization, photo upload, and hole positioning editor; now imports useModelRotation and passes rotation and onRotationChange props to HolePositioningEditor to fix the TypeScript error.",
   "frontend/src/types/fingering.ts": "Type definitions for ocarina fingering configuration including hole identifiers, fingering patterns, and note names extended to include C6 as the octave note.",
   "frontend/src/utils/defaultFingeringChart.ts": "Default 4-hole ocarina fingering chart with standard pendant ocarina fingering patterns where C is the key note (all holes closed) and C6 is one octave higher with all holes open.",
   "frontend/src/hooks/useFingeringChart.ts": "Custom React hook managing fingering chart state with localStorage persistence, providing functions to update patterns and reset to defaults.",
@@ -21,5 +21,6 @@
   "frontend/src/hooks/useOcarinaColors.ts": "Custom hook managing ocarina color preferences (hole fill, hole stroke, body fill, body outline) with localStorage persistence, providing getters and setters for each color property with sensible defaults.",
   "frontend/src/hooks/useOcarinaPhoto.ts": "Custom hook managing ocarina photo state with localStorage persistence, providing functions to upload photo (converting File to data URL), remove photo, and retrieve current photo URL.",
   "frontend/src/hooks/useCustomHolePositions.ts": "Custom hook managing custom hole positions with localStorage persistence, storing x/y coordinates for each of the 4 holes and providing getters, setters, and reset function to return to default positions from holeLayout utility.",
-  "frontend/src/components/HolePositioningEditor.tsx": "Component that displays the uploaded ocarina photo with draggable holes overlaid at their current positions, supporting both mouse and touch events for drag functionality, with visual feedback indicating which hole is being dragged, a reset button, and a Save button to confirm and persist positions."
+  "frontend/src/components/HolePositioningEditor.tsx": "Updated hole positioning editor that accepts photoUrl (null falls back to stock image), rotation state with controls (rotate CW/CCW and preset buttons), a small rotation preview, and optional onSave/onCancel callbacks for modal usage; drag-and-drop logic for all 4 holes is preserved.",
+  "frontend/src/hooks/useModelRotation.ts": "New custom hook managing the ocarina model rotation (0°/90°/180°/270°) with localStorage persistence, defaulting to 90°."
 }

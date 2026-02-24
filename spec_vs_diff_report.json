@@ -1,19 +1,31 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T09:34:41.119Z",
-  "summary": "The diff implements C6 note across all components (PianoKeyboard, fingering chart, playback, SheetMusic, OcarinaTablature) and replaces 'Lyrics' placeholder with '+' button in SheetMusic. All requirements appear to be implemented with evidence in the modified files.",
+  "generatedAt": "2026-02-24T10:25:50.310Z",
+  "summary": "The diff implements a 'Position Holes' button in App.tsx that opens HolePositioningEditor in a Dialog modal, wired to useOcarinaPhoto, useCustomHolePositions, and useModelRotation. REQ-49, REQ-50, and REQ-51 appear largely addressed. However, a hallucinated feature (model rotation controls) is included in the HolePositioningEditor and App.tsx that was not requested. The core requirements around the button, modal overlay, background image, draggable holes, Save/Cancel, and useCustomHolePositions as source of truth all appear implemented.",
   "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.95,
+  "hallucinated_features": [
+    {
+      "description": "A new useModelRotation hook was added and model rotation (0/90/180/270 degree) controls were integrated into the HolePositioningEditor and App.tsx, including a 'Position Holes & Rotation' button label and rotation UI.",
+      "reason": "None of the requirements (REQ-49, REQ-50, REQ-51) mention model rotation. The build request explicitly states non-goals include 'Adding new hole positioning features beyond drag-and-drop repositioning.' Rotation of the ocarina model is a new feature not requested.",
+      "evidence": [
+        "frontend/src/hooks/useModelRotation.ts",
+        "frontend/src/components/HolePositioningEditor.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/components/OcarinaSettings.tsx",
+        "frontend/src/components/OcarinaVisual.tsx",
+        "frontend-file-summaries.txt"
+      ]
+    }
+  ],
+  "confidence": 0.85,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/CompositionControls.tsx",
-    "frontend/src/components/FingeringEditor.tsx",
-    "frontend/src/components/PianoKeyboard.tsx",
-    "frontend/src/components/SheetMusic.tsx",
-    "frontend/src/types/fingering.ts",
-    "frontend/src/utils/defaultFingeringChart.ts",
+    "frontend/src/App.tsx",
+    "frontend/src/components/HolePositioningEditor.tsx",
+    "frontend/src/components/OcarinaSettings.tsx",
+    "frontend/src/components/OcarinaVisual.tsx",
+    "frontend/src/hooks/useModelRotation.ts",
     "project_state.json"
   ]
 }

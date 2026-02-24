@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from 'next-themes';
-import { Settings } from 'lucide-react';
+import { Settings, Move } from 'lucide-react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import PianoKeyboard from './components/PianoKeyboard';
@@ -9,10 +9,19 @@ import OcarinaVisual from './components/OcarinaVisual';
 import CompositionControls from './components/CompositionControls';
 import SongMetadata from './components/SongMetadata';
 import OcarinaSettings from './components/OcarinaSettings';
+import HolePositioningEditor from './components/HolePositioningEditor';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Toaster } from '@/components/ui/sonner';
 import { useFingeringChart } from './hooks/useFingeringChart';
+import { useOcarinaPhoto } from './hooks/useOcarinaPhoto';
+import { useCustomHolePositions } from './hooks/useCustomHolePositions';
+import { useModelRotation } from './hooks/useModelRotation';
 
 export interface Note {
   pitch: string;
@@ -49,8 +58,12 @@ function App() {
     return (saved as BodyShape) || 'round';
   });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isPositioningOpen, setIsPositioningOpen] = useState(false);
 
   const { fingeringChart, updateNotePattern, resetToDefault } = useFingeringChart();
+  const { photoUrl } = useOcarinaPhoto();
+  const { positions, setPosition, resetToDefaults: resetPositions } = useCustomHolePositions('round');
+  const { rotation, setRotation } = useModelRotation();
 
   useEffect(() => {
     localStorage.setItem('ocarina-hole-shape', holeShape);
@@ -91,7 +104,7 @@ function App() {
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        
+
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Song Metadata */}
@@ -145,15 +158,50 @@ function App() {
               fingeringChart={fingeringChart}
             />
 
-            {/* Ocarina Visual - Always use round body shape for play-along */}
-            <OcarinaVisual
-              currentNote={
-                currentPlayingIndex !== null ? notes[currentPlayingIndex]?.pitch : null
-              }
-              holeShape={holeShape}
-              bodyShape="round"
-              fingeringChart={fingeringChart}
-            />
+            {/* Ocarina Visual */}
+            <div className="relative">
+              <OcarinaVisual
+                currentNote={
+                  currentPlayingIndex !== null ? notes[currentPlayingIndex]?.pitch : null
+                }
+                holeShape={holeShape}
+                bodyShape="round"
+                fingeringChart={fingeringChart}
+              />
+
+              {/* Position Holes button */}
+              <div className="flex justify-center mt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsPositioningOpen(true)}
+                  className="gap-2"
+                >
+                  <Move className="w-4 h-4" />
+                  Position Holes &amp; Rotation
+                </Button>
+              </div>
+            </div>
+
+            {/* Hole Positioning Dialog */}
+            <Dialog open={isPositioningOpen} onOpenChange={setIsPositioningOpen}>
+              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Configure Hole Positions &amp; Model Rotation</DialogTitle>
+                </DialogHeader>
+                <HolePositioningEditor
+                  photoUrl={photoUrl}
+                  holeShape={holeShape}
+                  positions={positions}
+                  rotation={rotation}
+                  onPositionChange={setPosition}
+                  onReset={resetPositions}
+                  onRotationChange={setRotation}
+                  onSave={() => setIsPositioningOpen(false)}
+                  onCancel={() => setIsPositioningOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
 
             {/* Composition Controls */}
             <CompositionControls

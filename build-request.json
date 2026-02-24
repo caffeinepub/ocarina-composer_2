@@ -1,148 +1,76 @@
 {
   "kind": "build_request",
-  "title": "Add C6 octave note and replace lyrics placeholder with + button",
+  "title": "Open hole positioning editor directly on the OcarinaVisual model",
   "projectName": "Ocarina Composer",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-38",
-      "text": "Extend the PianoKeyboard component to include C6 note (one octave higher than the current highest note), maintaining the existing piano keyboard layout and functionality",
+      "id": "REQ-49",
+      "text": "Add a clearly visible 'Position Holes' button directly on or immediately below the OcarinaVisual play-along component in the main App layout, so users can access hole positioning without navigating into the Settings modal.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-4"
         ],
         "quotes": [
-          "keep only 4 holes in the model and add an octave note which would be the continuation of the piano c6"
+          "Let me set the holes configuration/ positioning on the model"
         ]
       },
       "acceptanceCriteria": [
-        "Piano keyboard displays C6 as an additional white key",
-        "Clicking C6 key adds the note to the composition",
-        "C6 note is visually consistent with existing piano keys"
+        "A 'Position Holes' button is visible in the main interface near the OcarinaVisual component.",
+        "The button is accessible without opening the Settings modal.",
+        "Clicking the button opens the HolePositioningEditor component."
       ]
     },
     {
-      "id": "REQ-39",
-      "text": "Add C6 note to the default fingering chart with all 4 holes open on the ocarina, defining it as the highest note in the octave range",
+      "id": "REQ-50",
+      "text": "When the 'Position Holes' button is clicked, open the HolePositioningEditor component as a modal or inline overlay directly on the OcarinaVisual component, so the user can drag and reposition each of the 4 holes (left index, left middle, right index, right middle) on the current ocarina background (stock photo or uploaded photo) without leaving the main view.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-4"
         ],
         "quotes": [
-          "all holes open in the ocarina"
+          "Let me set the holes configuration/ positioning on the model"
         ]
       },
       "acceptanceCriteria": [
-        "C6 fingering pattern shows all 4 holes open (none covered)",
-        "C6 appears in the FingeringEditor component for configuration",
-        "Custom fingering chart supports C6 with localStorage persistence"
+        "The HolePositioningEditor opens overlaying or directly adjacent to the OcarinaVisual component.",
+        "The editor shows the same background image currently used by OcarinaVisual (stock image or user-uploaded photo).",
+        "All 4 holes are draggable (mouse and touch) within the editor.",
+        "A Save/Set button confirms and persists the new hole positions via the useCustomHolePositions hook.",
+        "A Cancel or Close button discards changes and closes the editor.",
+        "After saving, the OcarinaVisual component immediately reflects the updated hole positions."
       ]
     },
     {
-      "id": "REQ-40",
-      "text": "Update CompositionControls playback to support C6 note with synthesized ocarina-style tone at the correct frequency",
+      "id": "REQ-51",
+      "text": "Ensure the HolePositioningEditor opened from the OcarinaVisual context uses the stock grey ocarina image as the background by default when no user photo has been uploaded, matching the background currently displayed by OcarinaVisual, so the user can visually align holes to the actual image.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-4"
         ],
         "quotes": [
-          "add an octave note which would be the continuation of the piano c6"
+          "Let me set the holes configuration/ positioning on the model"
         ]
       },
       "acceptanceCriteria": [
-        "C6 note plays with Web Audio API synthesis during composition playback",
-        "C6 frequency is one octave higher than C5",
-        "Playback timing and tone quality matches existing notes"
-      ]
-    },
-    {
-      "id": "REQ-41",
-      "text": "Update SheetMusic component to display C6 note with proper sheet music notation on the staff",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "add an octave note which would be the continuation of the piano c6"
-        ]
-      },
-      "acceptanceCriteria": [
-        "C6 note renders correctly on the musical staff with ledger lines if needed",
-        "Duration symbols (whole, half, quarter, eighth) work for C6",
-        "Note selection and deletion work for C6 notes"
-      ]
-    },
-    {
-      "id": "REQ-42",
-      "text": "Update OcarinaTablature component to render C6 note showing all 4 holes open (unfilled circles) in the 2x2 layout",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "all holes open in the ocarina"
-        ]
-      },
-      "acceptanceCriteria": [
-        "C6 tablature displays 4 unfilled/open holes",
-        "Tablature respects custom hole shape settings (round, oval, square)",
-        "Visual representation is consistent with fingering chart"
-      ]
-    },
-    {
-      "id": "REQ-43",
-      "text": "Update OcarinaVisual play-along component to display C6 note with all 4 holes open (invisible or unfilled) during playback",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "all holes open in the ocarina"
-        ]
-      },
-      "acceptanceCriteria": [
-        "C6 visualization shows no covered holes during playback",
-        "All 4 holes remain unfilled/invisible when C6 is playing",
-        "Rotation and layout alignment remains consistent"
-      ]
-    },
-    {
-      "id": "REQ-44",
-      "text": "Remove the 'Lyrics' placeholder text from SheetMusic component and replace it with a '+' button that appears under each note when no lyrics text has been entered",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "it appears at the bottom of each note, just the text lyrics, I don't want to see 'lyrics' under every note unless something has been typed in, so just replace for a + sign"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Notes without lyrics display a '+' button instead of 'Lyrics' text",
-        "Clicking '+' button opens lyrics input for that note",
-        "Once lyrics are entered, the actual lyrics text displays instead of the '+' button",
-        "Empty lyrics show '+' button again if lyrics are deleted"
+        "When no user photo is uploaded, the HolePositioningEditor shows the stock ocarina image as background.",
+        "When a user photo is uploaded, the HolePositioningEditor shows the user photo as background.",
+        "The hole overlay markers are positioned using the current values from useCustomHolePositions."
       ]
     }
   ],
   "constraints": [
-    "Keep the 4-hole ocarina model unchanged; do not add a 5th physical hole",
-    "Maintain existing localStorage persistence for custom fingering configurations",
-    "Preserve the 2x2 hole layout in both OcarinaTablature and OcarinaVisual components",
-    "Do not modify the 90° counterclockwise rotation of OcarinaVisual component"
+    "Do not break or modify the existing HolePositioningEditor component's drag-and-drop logic (mouse + touch support) or Save/Reset functionality.",
+    "Do not modify any files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
+    "useCustomHolePositions hook must remain the single source of truth for hole position state and persistence."
   ],
   "nonGoals": [
-    "Adding more than one new note to the piano keyboard",
-    "Changing the existing fingering patterns for notes other than C6",
-    "Modifying the lyrics editing functionality beyond the placeholder replacement",
-    "Adding a separate keyboard for the octave note"
+    "Changing the fingering pattern (open/closed state) of holes — that is handled by FingeringEditor.",
+    "Modifying Settings modal layout or other settings sections.",
+    "Adding new hole positioning features beyond drag-and-drop repositioning."
   ],
   "imageRequirements": {
     "required": [],

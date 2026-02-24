@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-extend-the-pianokeyboard-component-to-include-c6-note-one-octave-higher-than-the-current-highest-note-maintaining-the-existing-piano-keyboard-layout-and-functionality",
-      "featureTitle": "Extend the PianoKeyboard component to include C6 note (one octave higher than the current highest note), maintaining the existing piano keyboard layout and functionality",
+      "featureId": "feature-add-a-clearly-visible-position-holes-button-directly-on-or-immediately-below-the-ocarinavisual-play-along-component-in-the-main-app-layout-so-users-can-access-hole-positioning-without-navigating-into-the-settings-modal",
+      "featureTitle": "Add a clearly visible 'Position Holes' button directly on or immediately below the OcarinaVisual play-along component in the main App layout, so users can access hole positioning without navigating into the Settings modal.",
       "files": [
-        "frontend/src/components/PianoKeyboard.tsx"
+        "frontend/src/App.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -16,17 +16,16 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-38"
+        "REQ-49"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-c6-note-to-the-default-fingering-chart-with-all-4-holes-open-on-the-ocarina-defining-it-as-the-highest-note-in-the-octave-range",
-      "featureTitle": "Add C6 note to the default fingering chart with all 4 holes open on the ocarina, defining it as the highest note in the octave range",
+      "featureId": "feature-when-the-position-holes-button-is-clicked-open-the-holepositioningeditor-component-as-a-modal-or-inline-overlay-directly-on-the-ocarinavisual-component-so-the-user-can-drag-and-reposition-each-of-the-4-holes-left-index-left-middle-right-index-right-middle-on-the-current-ocarina-background-stock-photo-or-uploaded-photo-without-leaving-the-main-view",
+      "featureTitle": "When the 'Position Holes' button is clicked, open the HolePositioningEditor component as a modal or inline overlay directly on the OcarinaVisual component, so the user can drag and reposition each of the 4 holes (left index, left middle, right index, right middle) on the current ocarina background (stock photo or uploaded photo) without leaving the main view.",
       "files": [
-        "frontend/src/components/FingeringEditor.tsx",
-        "frontend/src/types/fingering.ts",
-        "frontend/src/utils/defaultFingeringChart.ts"
+        "frontend/src/App.tsx",
+        "frontend/src/components/HolePositioningEditor.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -37,15 +36,16 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-39"
+        "REQ-50"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-compositioncontrols-playback-to-support-c6-note-with-synthesized-ocarina-style-tone-at-the-correct-frequency",
-      "featureTitle": "Update CompositionControls playback to support C6 note with synthesized ocarina-style tone at the correct frequency",
+      "featureId": "feature-ensure-the-holepositioningeditor-opened-from-the-ocarinavisual-context-uses-the-stock-grey-ocarina-image-as-the-background-by-default-when-no-user-photo-has-been-uploaded-matching-the-background-currently-displayed-by-ocarinavisual-so-the-user-can-visually-align-holes-to-the-actual-image",
+      "featureTitle": "Ensure the HolePositioningEditor opened from the OcarinaVisual context uses the stock grey ocarina image as the background by default when no user photo has been uploaded, matching the background currently displayed by OcarinaVisual, so the user can visually align holes to the actual image.",
       "files": [
-        "frontend/src/components/CompositionControls.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/components/HolePositioningEditor.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -56,45 +56,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-40"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-sheetmusic-component-to-display-c6-note-with-proper-sheet-music-notation-on-the-staff",
-      "featureTitle": "Update SheetMusic component to display C6 note with proper sheet music notation on the staff",
-      "files": [
-        "frontend/src/components/SheetMusic.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-41"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-remove-the-lyrics-placeholder-text-from-sheetmusic-component-and-replace-it-with-a-button-that-appears-under-each-note-when-no-lyrics-text-has-been-entered",
-      "featureTitle": "Remove the 'Lyrics' placeholder text from SheetMusic component and replace it with a '+' button that appears under each note when no lyrics text has been entered",
-      "files": [
-        "frontend/src/components/SheetMusic.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-44"
+        "REQ-51"
       ],
       "confidence": "high"
     }

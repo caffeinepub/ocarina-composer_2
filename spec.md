@@ -1,15 +1,14 @@
 # Specification
 
 ## Summary
-**Goal:** Extend the ocarina note range by adding C6 (octave note with all holes open) and improve the lyrics UI by replacing placeholder text with a '+' button.
+**Goal:** Allow users to open the hole positioning editor directly from the main view by adding a "Position Holes" button near the OcarinaVisual component, without needing to navigate into the Settings modal.
 
 **Planned changes:**
-- Add C6 note to the piano keyboard as an additional white key
-- Define C6 fingering pattern as all 4 holes open in the fingering chart
-- Update playback synthesis to support C6 at the correct frequency
-- Render C6 in sheet music notation with proper staff positioning
-- Display C6 in tablature as 4 unfilled/open holes in 2x2 layout
-- Show C6 in play-along visual with all holes unfilled during playback
-- Replace 'Lyrics' placeholder text under notes with a '+' button that only appears when no lyrics are entered
+- Add a "Position Holes" button visible in the main interface, directly on or immediately below the OcarinaVisual component.
+- When clicked, open the HolePositioningEditor as a modal or inline overlay on top of the OcarinaVisual component.
+- The HolePositioningEditor uses the same background image as OcarinaVisual (stock grey ocarina image by default, or user-uploaded photo if available).
+- All 4 holes remain draggable (mouse and touch) within the editor.
+- A Save button persists new hole positions via the existing `useCustomHolePositions` hook; a Cancel/Close button discards changes.
+- After saving, OcarinaVisual immediately reflects the updated hole positions.
 
-**User-visible outcome:** Users can compose with an extended note range including the C6 octave note (all holes open), and the sheet music interface shows a cleaner '+' button instead of 'Lyrics' text under notes without lyrics.
+**User-visible outcome:** Users can click "Position Holes" directly on the main screen to drag and reposition the 4 ocarina holes on the actual ocarina image, then save without ever opening the Settings modal.

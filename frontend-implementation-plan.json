@@ -1,128 +1,66 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add C6 octave note and replace lyrics placeholder with + button",
+  "title": "Open hole positioning editor directly on the OcarinaVisual model",
   "requirements": [
     {
-      "id": "REQ-38",
-      "summary": "Extend PianoKeyboard component to include C6 note maintaining existing layout and functionality",
+      "id": "REQ-49",
+      "summary": "Add a 'Position Holes' button near OcarinaVisual in the main App layout for direct access to hole positioning without opening Settings modal",
       "acceptanceCriteria": [
-        "Piano keyboard displays C6 as an additional white key",
-        "Clicking C6 key adds the note to the composition",
-        "C6 note is visually consistent with existing piano keys"
+        "A 'Position Holes' button is visible in the main interface near the OcarinaVisual component.",
+        "The button is accessible without opening the Settings modal.",
+        "Clicking the button opens the HolePositioningEditor component."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/PianoKeyboard.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add C6 as an additional white key to the piano keyboard layout, extending the current note range by one octave. Update the key rendering logic to include C6 in the white keys array and ensure the onClick handler supports C6 note selection."
+          "description": "Add state to control HolePositioningEditor modal visibility. Add a 'Position Holes' button immediately below the OcarinaVisual component in the main layout. Wire the button's onClick handler to open the HolePositioningEditor as a modal or overlay. Ensure the button is styled consistently with the existing UI using shadcn/ui Button component."
         }
       ]
     },
     {
-      "id": "REQ-39",
-      "summary": "Add C6 note to default fingering chart with all 4 holes open as the highest octave note",
+      "id": "REQ-50",
+      "summary": "Open HolePositioningEditor as a modal/overlay on OcarinaVisual when 'Position Holes' is clicked, allowing drag-and-drop repositioning of all 4 holes with Save and Cancel actions",
       "acceptanceCriteria": [
-        "C6 fingering pattern shows all 4 holes open (none covered)",
-        "C6 appears in the FingeringEditor component for configuration",
-        "Custom fingering chart supports C6 with localStorage persistence"
+        "The HolePositioningEditor opens overlaying or directly adjacent to the OcarinaVisual component.",
+        "The editor shows the same background image currently used by OcarinaVisual (stock image or user-uploaded photo).",
+        "All 4 holes are draggable (mouse and touch) within the editor.",
+        "A Save/Set button confirms and persists the new hole positions via the useCustomHolePositions hook.",
+        "A Cancel or Close button discards changes and closes the editor.",
+        "After saving, the OcarinaVisual component immediately reflects the updated hole positions."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/types/fingering.ts",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add C6 to the NoteName type union to support the new octave note in the type system."
+          "description": "Conditionally render the HolePositioningEditor component when the modal state is open. Pass the current ocarina photo (from useOcarinaPhoto hook), body shape, and hole positions (from useCustomHolePositions hook) as props to HolePositioningEditor. Wire the onSave callback to persist positions via useCustomHolePositions.setHolePosition and close the modal. Wire the onCancel/onClose callback to close the modal without saving. Ensure the modal overlays the main content using a Dialog or Sheet component from shadcn/ui."
         },
         {
-          "path": "frontend/src/utils/defaultFingeringChart.ts",
+          "path": "frontend/src/components/HolePositioningEditor.tsx",
           "operation": "modify",
-          "description": "Add C6 entry to the default fingering chart with all 4 holes open (topLeft: false, topRight: false, bottomLeft: false, bottomRight: false), defining it as the highest note in the octave range."
+          "description": "Ensure the component accepts photo, bodyShape, and current hole positions as props. Update the background rendering logic to use the passed photo prop (user-uploaded or stock image frontend/public/assets/generated/ocarina-stock-grey.dim_400x400.png). Verify that the existing drag-and-drop logic (mouse and touch support) remains intact. Ensure the Save button calls the parent-provided onSave callback with the updated hole positions. Ensure the Cancel/Close button calls the parent-provided onCancel callback. Do not modify the core drag-and-drop or Save/Reset functionality."
+        }
+      ]
+    },
+    {
+      "id": "REQ-51",
+      "summary": "Ensure HolePositioningEditor uses the stock grey ocarina image as default background when no user photo is uploaded, matching OcarinaVisual's current display",
+      "acceptanceCriteria": [
+        "When no user photo is uploaded, the HolePositioningEditor shows the stock ocarina image as background.",
+        "When a user photo is uploaded, the HolePositioningEditor shows the user photo as background.",
+        "The hole overlay markers are positioned using the current values from useCustomHolePositions."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "When rendering HolePositioningEditor, pass the photo prop from useOcarinaPhoto.photo. If photo is null or undefined, pass the workspace path frontend/public/assets/generated/ocarina-stock-grey.dim_400x400.png as a fallback. Ensure the same logic is used by OcarinaVisual for consistency."
         },
         {
-          "path": "frontend/src/components/FingeringEditor.tsx",
+          "path": "frontend/src/components/HolePositioningEditor.tsx",
           "operation": "modify",
-          "description": "Update the note selection list to include C6, ensuring it appears in the fingering configuration dialog and can be customized with localStorage persistence."
-        }
-      ]
-    },
-    {
-      "id": "REQ-40",
-      "summary": "Update CompositionControls playback to support C6 note with synthesized ocarina-style tone at correct frequency",
-      "acceptanceCriteria": [
-        "C6 note plays with Web Audio API synthesis during composition playback",
-        "C6 frequency is one octave higher than C5",
-        "Playback timing and tone quality matches existing notes"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/CompositionControls.tsx",
-          "operation": "modify",
-          "description": "Add C6 note to the frequency mapping for Web Audio API synthesis, calculating its frequency as one octave higher than C5 (1046.50 Hz for C6). Ensure the sine wave tone generation and playback timing handle C6 consistently with existing notes."
-        }
-      ]
-    },
-    {
-      "id": "REQ-41",
-      "summary": "Update SheetMusic component to display C6 note with proper staff notation",
-      "acceptanceCriteria": [
-        "C6 note renders correctly on the musical staff with ledger lines if needed",
-        "Duration symbols (whole, half, quarter, eighth) work for C6",
-        "Note selection and deletion work for C6 notes"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/SheetMusic.tsx",
-          "operation": "modify",
-          "description": "Add C6 to the sheet music rendering logic, calculating its vertical position on the staff with appropriate ledger lines. Ensure duration symbols, note selection highlighting, and deletion controls work correctly for C6 notes."
-        }
-      ]
-    },
-    {
-      "id": "REQ-42",
-      "summary": "Update OcarinaTablature component to render C6 note showing all 4 holes open in 2x2 layout",
-      "acceptanceCriteria": [
-        "C6 tablature displays 4 unfilled/open holes",
-        "Tablature respects custom hole shape settings (round, oval, square)",
-        "Visual representation is consistent with fingering chart"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/OcarinaTablature.tsx",
-          "operation": "modify",
-          "description": "Update the tablature rendering to support C6 note with all 4 holes displayed as open/unfilled circles in the 2x2 layout. Ensure the component respects custom hole shape settings and retrieves the C6 fingering pattern from the fingering chart."
-        }
-      ]
-    },
-    {
-      "id": "REQ-43",
-      "summary": "Update OcarinaVisual play-along component to display C6 with all 4 holes open during playback",
-      "acceptanceCriteria": [
-        "C6 visualization shows no covered holes during playback",
-        "All 4 holes remain unfilled/invisible when C6 is playing",
-        "Rotation and layout alignment remains consistent"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/OcarinaVisual.tsx",
-          "operation": "modify",
-          "description": "Update the visual representation to handle C6 note by displaying all 4 holes as open/unfilled during playback. Ensure the 90° counterclockwise rotation and layout alignment remain unchanged, and that C6 fingering pattern is retrieved from the fingering chart."
-        }
-      ]
-    },
-    {
-      "id": "REQ-44",
-      "summary": "Replace 'Lyrics' placeholder text with '+' button that appears under notes without lyrics",
-      "acceptanceCriteria": [
-        "Notes without lyrics display a '+' button instead of 'Lyrics' text",
-        "Clicking '+' button opens lyrics input for that note",
-        "Once lyrics are entered, the actual lyrics text displays instead of the '+' button",
-        "Empty lyrics show '+' button again if lyrics are deleted"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/SheetMusic.tsx",
-          "operation": "modify",
-          "description": "Replace the 'Lyrics' placeholder text with a '+' button that appears under each note when no lyrics have been entered. Update the conditional rendering logic so that: (1) notes without lyrics show a '+' button, (2) clicking the '+' button opens the lyrics input for that note, (3) notes with lyrics display the actual lyrics text instead of the '+' button, and (4) the '+' button reappears if lyrics are deleted or empty."
+          "description": "Update the background image rendering to accept the photo prop and display it as the background. If the photo prop is the stock image path, render it as a static asset. If the photo prop is a user-uploaded data URL, render it directly. Ensure the hole markers overlay the background correctly using current hole positions from props. Verify the component's usage instructions before implementing."
         }
       ]
     }
