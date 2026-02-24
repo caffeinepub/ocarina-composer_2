@@ -1,0 +1,540 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 19,
+  "summary": "4-hole ocarina tablature music writing app with standard sheet music notation, piano keyboard interface, note editing, lyrics support, ocarina sound playback, and visual fingering illustrations",
+  "architectural_notes": [
+    "Support notes A-G plus sharps for 4-hole ocarina range",
+    "Combine traditional tablature with standard sheet music notation",
+    "Real-time visual feedback during playback",
+    "Ocarina fingering display uses 2x2 layout reflecting physical hand placement",
+    "Mouthpiece positioned between left and right index finger holes with middle finger holes parallel behind them",
+    "Fingering editor allows manual configuration of hole patterns for each note in the octave",
+    "Round holes set as default standard shape",
+    "Ocarina visual display rotated 90° counterclockwise for portrait phone orientation with mouthpiece at bottom",
+    "Ocarina body shape selectable (round, oval, square) independent of hole shape",
+    "During playback, only covered holes are visually highlighted; open holes remain unfilled"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-a-piano-keyboard-interface-component-that-displays-a-standard-piano-keyboard-with-keys-for-notes-a-through-g-including-sharps-allowing-users-to-click-keys-to-input-notes-into-the-composition",
+      "title": "Create a piano keyboard interface component that displays a standard piano keyboard with keys for notes A through G including sharps, allowing users to click keys to input notes into the composition",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-standard-sheet-music-notation-display-showing-bars-time-signatures-note-symbols-with-proper-timing-whole-notes-half-notes-quarter-notes-eighth-notes-and-measure-lines",
+      "title": "Implement standard sheet music notation display showing bars, time signatures, note symbols with proper timing (whole notes, half notes, quarter notes, eighth notes), and measure lines",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-traditional-ocarina-tablature-notation-below-each-musical-note-using-filled-and-unfilled-circles-to-represent-which-holes-on-the-4-hole-ocarina-should-be-closed-or-open",
+      "title": "Display traditional ocarina tablature notation below each musical note using filled and unfilled circles to represent which holes on the 4-hole ocarina should be closed or open",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-interactive-visual-ocarina-illustration-that-highlights-which-holes-to-cover-in-real-time-during-playback-showing-the-current-note-s-fingering-pattern",
+      "title": "Create an interactive visual ocarina illustration that highlights which holes to cover in real-time during playback, showing the current note's fingering pattern",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-ocarina-sound-playback-functionality-that-plays-the-composed-melody-using-ocarina-style-audio-samples-or-synthesized-tones-for-each-note-a-g-with-sharps-at-the-correct-timing",
+      "title": "Implement ocarina sound playback functionality that plays the composed melody using ocarina-style audio samples or synthesized tones for each note (A-G with sharps) at the correct timing",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-note-editing-capabilities-allowing-users-to-select-existing-notes-in-the-composition-to-delete-them-change-their-pitch-or-modify-their-duration",
+      "title": "Add note editing capabilities allowing users to select existing notes in the composition to delete them, change their pitch, or modify their duration",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-lyrics-input-and-display-functionality-that-allows-users-to-add-text-lyrics-beneath-the-musical-notation-aligned-with-the-corresponding-notes",
+      "title": "Implement lyrics input and display functionality that allows users to add text lyrics beneath the musical notation, aligned with the corresponding notes",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-song-metadata-form-with-input-fields-for-title-and-description-and-implement-save-functionality-that-persists-the-complete-composition-notes-timing-lyrics-metadata-to-the-backend",
+      "title": "Create a song metadata form with input fields for title and description, and implement save functionality that persists the complete composition (notes, timing, lyrics, metadata) to the backend",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-frontend-requirement-to-display-a-creative-cohesive-visual-theme-with-distinct-style-for-the-ocarina-composition-interface-using-colors-and-typography-that-evoke-musical-and-natural-themes-appropriate-for-an-ocarina-instrument-app-avoiding-blue-and-purple-unless-specifically-needed-for-musical-notation",
+      "title": "Add a frontend requirement to display a creative, cohesive visual theme with distinct style for the ocarina composition interface, using colors and typography that evoke musical and natural themes appropriate for an ocarina instrument app, avoiding blue and purple unless specifically needed for musical notation",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-user-settings-interface-allowing-users-to-select-between-round-oval-or-square-shapes-for-ocarina-hole-visualization",
+      "title": "Add user settings interface allowing users to select between round, oval, or square shapes for ocarina hole visualization",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-modify-ocarinavisual-component-to-display-holes-in-a-2x2-layout-representing-physical-hand-placement-2-holes-for-right-hand-and-2-holes-for-left-hand-replacing-the-current-inline-4-hole-display",
+      "title": "Modify OcarinaVisual component to display holes in a 2x2 layout representing physical hand placement: 2 holes for right hand and 2 holes for left hand, replacing the current inline 4-hole display",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-ocarinatablature-component-to-display-holes-in-a-2x2-layout-matching-the-ocarinavisual-component-arrangement",
+      "title": "Update OcarinaTablature component to display holes in a 2x2 layout matching the OcarinaVisual component arrangement",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-the-user-selected-hole-shape-round-oval-or-square-to-both-ocarinavisual-and-ocarinatablature-components-dynamically",
+      "title": "Apply the user-selected hole shape (round, oval, or square) to both OcarinaVisual and OcarinaTablature components dynamically",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-visual-mouthpiece-element-at-the-front-of-the-ocarinavisual-component-to-indicate-where-air-intake-occurs",
+      "title": "Add a visual mouthpiece element at the front of the OcarinaVisual component to indicate where air intake occurs",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-ocarinavisual-component-hole-layout-to-position-mouthpiece-air-intake-at-the-center-front-with-left-index-finger-hole-to-the-left-and-right-index-finger-hole-to-the-right-of-the-mouthpiece-and-two-additional-holes-positioned-directly-behind-these-index-holes-for-the-left-middle-finger-and-right-middle-finger-respectively",
+      "title": "Update OcarinaVisual component hole layout to position mouthpiece (air intake) at the center front, with left index finger hole to the left and right index finger hole to the right of the mouthpiece, and two additional holes positioned directly behind these index holes for the left middle finger and right middle finger respectively",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-set-round-as-the-default-hole-shape-in-the-application-overriding-any-previous-default-settings",
+      "title": "Set round as the default hole shape in the application, overriding any previous default settings",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-fingering-configuration-interface-that-allows-users-to-manually-define-which-holes-should-be-open-or-closed-for-each-note-in-the-octave-with-visual-feedback-showing-the-current-fingering-pattern-being-configured",
+      "title": "Create a fingering configuration interface that allows users to manually define which holes should be open or closed for each note in the octave, with visual feedback showing the current fingering pattern being configured",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-store-custom-fingering-configurations-in-browser-localstorage-so-user-defined-fingering-patterns-persist-across-sessions",
+      "title": "Store custom fingering configurations in browser localStorage so user-defined fingering patterns persist across sessions",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-90-counterclockwise-rotation-transform-to-the-ocarinavisual-component-so-the-mouthpiece-faces-the-bottom-of-the-screen-instead-of-the-left-side-making-the-display-intuitive-for-portrait-phone-orientation",
+      "title": "Apply a 90° counterclockwise rotation transform to the OcarinaVisual component so the mouthpiece faces the bottom of the screen instead of the left side, making the display intuitive for portrait phone orientation",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-all-finger-position-labels-index-middle-left-right-from-the-ocarinavisual-component-hole-display",
+      "title": "Remove all finger position labels (index, middle, left, right) from the OcarinaVisual component hole display",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-user-setting-in-ocarinasettings-component-to-select-ocarina-body-shape-with-options-round-oval-and-square",
+      "title": "Add a user setting in OcarinaSettings component to select ocarina body shape with options: round, oval, and square",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-the-selected-ocarina-body-shape-round-oval-square-to-the-ocarinavisual-component-s-main-body-element",
+      "title": "Apply the selected ocarina body shape (round, oval, square) to the OcarinaVisual component's main body element",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-play-along-visualization-in-ocarinavisual-component-to-display-only-covered-closed-holes-in-black-leaving-open-holes-unfilled-or-invisible-during-playback",
+      "title": "Update play-along visualization in OcarinaVisual component to display only covered/closed holes in black, leaving open holes unfilled or invisible during playback",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-play-along-visualization-in-ocarinavisual-component-to-use-the-exact-same-hole-positions-and-layout-as-the-fingeringeditor-component-ensuring-consistent-visual-representation-across-both-interfaces",
+      "title": "Update the play-along visualization in OcarinaVisual component to use the exact same hole positions and layout as the FingeringEditor component, ensuring consistent visual representation across both interfaces",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-color-customization-settings-for-ocarina-holes-in-ocarinasettings-component-allowing-users-to-select-custom-colors-for-the-hole-fill-and-stroke",
+      "title": "Add color customization settings for ocarina holes in OcarinaSettings component, allowing users to select custom colors for the hole fill and stroke",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-color-customization-settings-for-ocarina-body-in-ocarinasettings-component-allowing-users-to-select-custom-colors-for-the-body-fill-and-outline",
+      "title": "Add color customization settings for ocarina body in OcarinaSettings component, allowing users to select custom colors for the body fill and outline",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-photo-upload-functionality-in-ocarinasettings-that-allows-users-to-upload-an-image-file-of-their-actual-ocarina-to-use-as-the-background-for-the-ocarinavisual-component",
+      "title": "Implement photo upload functionality in OcarinaSettings that allows users to upload an image file of their actual ocarina to use as the background for the OcarinaVisual component",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-hole-positioning-interface-that-allows-users-to-manually-drag-and-position-each-of-the-4-holes-left-index-left-middle-right-index-right-middle-on-their-uploaded-ocarina-photo",
+      "title": "Create a hole positioning interface that allows users to manually drag and position each of the 4 holes (left index, left middle, right index, right middle) on their uploaded ocarina photo",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-ocarinavisual-component-to-render-the-uploaded-photo-as-the-background-when-available-displaying-the-user-positioned-holes-at-their-custom-coordinates-instead-of-using-the-geometric-body-shape",
+      "title": "Update OcarinaVisual component to render the uploaded photo as the background when available, displaying the user-positioned holes at their custom coordinates instead of using the geometric body shape",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-settings-button-in-the-main-interface-that-opens-the-ocarinasettings-component-as-a-popup-dialog-or-modal-overlay",
+      "title": "Add a Settings button in the main interface that opens the OcarinaSettings component as a popup dialog or modal overlay",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-holepositioningeditor-component-to-support-touchscreen-drag-events-touchstart-touchmove-touchend-in-addition-to-mouse-events-for-moving-hole-positions-on-the-uploaded-ocarina-photo",
+      "title": "Update HolePositioningEditor component to support touchscreen drag events (touchstart, touchmove, touchend) in addition to mouse events for moving hole positions on the uploaded ocarina photo",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-visible-save-or-set-button-to-the-holepositioningeditor-component-that-confirms-and-persists-the-custom-hole-positions-when-clicked",
+      "title": "Add a visible Save or Set button to the HolePositioningEditor component that confirms and persists the custom hole positions when clicked",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-ocarinavisual-play-along-component-always-uses-a-standard-round-body-shape-matching-the-tablature-display-ignoring-any-custom-body-shape-settings-during-playback",
+      "title": "Ensure the OcarinaVisual play-along component always uses a standard round body shape matching the tablature display, ignoring any custom body shape settings during playback",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-90-counterclockwise-rotation-applied-to-ocarinavisual-component-correctly-aligns-the-hole-layout-with-the-ocarinatablature-component-s-2x2-hole-arrangement",
+      "title": "Verify that the 90° counterclockwise rotation applied to OcarinaVisual component correctly aligns the hole layout with the OcarinaTablature component's 2x2 hole arrangement",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-the-pianokeyboard-component-to-include-c6-note-one-octave-higher-than-the-current-highest-note-maintaining-the-existing-piano-keyboard-layout-and-functionality",
+      "title": "Extend the PianoKeyboard component to include C6 note (one octave higher than the current highest note), maintaining the existing piano keyboard layout and functionality",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-c6-note-to-the-default-fingering-chart-with-all-4-holes-open-on-the-ocarina-defining-it-as-the-highest-note-in-the-octave-range",
+      "title": "Add C6 note to the default fingering chart with all 4 holes open on the ocarina, defining it as the highest note in the octave range",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-compositioncontrols-playback-to-support-c6-note-with-synthesized-ocarina-style-tone-at-the-correct-frequency",
+      "title": "Update CompositionControls playback to support C6 note with synthesized ocarina-style tone at the correct frequency",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-sheetmusic-component-to-display-c6-note-with-proper-sheet-music-notation-on-the-staff",
+      "title": "Update SheetMusic component to display C6 note with proper sheet music notation on the staff",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-lyrics-placeholder-text-from-sheetmusic-component-and-replace-it-with-a-button-that-appears-under-each-note-when-no-lyrics-text-has-been-entered",
+      "title": "Remove the 'Lyrics' placeholder text from SheetMusic component and replace it with a '+' button that appears under each note when no lyrics text has been entered",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Traditional filled/unfilled circle notation for ocarina holes",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Standard sheet music layout with bars, timing, and musical symbols",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Piano keyboard interface for note input",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Edit and delete notes functionality",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Lyrics support integrated with music",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Ocarina sound playback",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Visual ocarina illustration showing fingering as notes play",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Save songs with title and description",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Create a backend data model for storing ocarina songs with fields: title (Text), description (Text), notes array containing note data (pitch, duration, timing position), and lyrics (Text)",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Implement backend CRUD operations for songs: create new song, retrieve song by ID, update existing song, delete song, and list all saved songs",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Add user settings to customize ocarina hole shape (round, oval, or square)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Reorganize ocarina fingering display from inline to 2x2 layout (2 holes for right hand, 2 for left hand)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Add visual mouthpiece element to ocarina illustration",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Position mouthpiece (air intake) between left and right index finger holes, with two additional holes behind them for middle fingers",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Create fingering editor interface to manually configure which holes are open/closed for each note in the octave",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Set round holes as the default standard hole shape",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Rotate ocarina visual display 90° counterclockwise so mouthpiece faces bottom of screen",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Remove finger position labels (index, middle, left, right) from ocarina hole display",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Add user setting to select ocarina body shape (round, oval, square) in addition to hole shape",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Update play-along visualization to show only covered/closed holes in black, leaving open holes unfilled",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Make ocarina visual smaller and fit within fingering panel without blocking other screen details",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Remove all finger position labels (index, middle, left, right) from the OcarinaTablature component hole display",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Make play-along visualization use the exact same hole positions and layout as the fingering configuration editor",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Add color customization for ocarina body and holes",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Allow photo upload of actual ocarina with manual positioning of the 4 holes on the uploaded image",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Add a settings button that opens customization options as a popup, while keeping tablature model always showing the standard round shape",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Fix hole positioning interface to support touchscreen dragging and add a visible Save/Set button to confirm hole positions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Keep play-along ocarina model at standard round shape matching tablature, ensuring 90° rotation aligns visual model with tablature layout",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Add C6 note to piano keyboard (one octave higher) with all holes open on ocarina",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Replace 'Lyrics' placeholder text under notes with '+' button; only show actual lyrics when user has typed text",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Update OcarinaTablature component to render C6 note showing all 4 holes open (unfilled circles) in the 2x2 layout",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Update OcarinaVisual play-along component to display C6 note with all 4 holes open (invisible or unfilled) during playback",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Ocarina Composer",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

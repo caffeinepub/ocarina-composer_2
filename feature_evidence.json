@@ -1,0 +1,102 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-extend-the-pianokeyboard-component-to-include-c6-note-one-octave-higher-than-the-current-highest-note-maintaining-the-existing-piano-keyboard-layout-and-functionality",
+      "featureTitle": "Extend the PianoKeyboard component to include C6 note (one octave higher than the current highest note), maintaining the existing piano keyboard layout and functionality",
+      "files": [
+        "frontend/src/components/PianoKeyboard.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-38"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-c6-note-to-the-default-fingering-chart-with-all-4-holes-open-on-the-ocarina-defining-it-as-the-highest-note-in-the-octave-range",
+      "featureTitle": "Add C6 note to the default fingering chart with all 4 holes open on the ocarina, defining it as the highest note in the octave range",
+      "files": [
+        "frontend/src/components/FingeringEditor.tsx",
+        "frontend/src/types/fingering.ts",
+        "frontend/src/utils/defaultFingeringChart.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-39"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-compositioncontrols-playback-to-support-c6-note-with-synthesized-ocarina-style-tone-at-the-correct-frequency",
+      "featureTitle": "Update CompositionControls playback to support C6 note with synthesized ocarina-style tone at the correct frequency",
+      "files": [
+        "frontend/src/components/CompositionControls.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-40"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-sheetmusic-component-to-display-c6-note-with-proper-sheet-music-notation-on-the-staff",
+      "featureTitle": "Update SheetMusic component to display C6 note with proper sheet music notation on the staff",
+      "files": [
+        "frontend/src/components/SheetMusic.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-41"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-remove-the-lyrics-placeholder-text-from-sheetmusic-component-and-replace-it-with-a-button-that-appears-under-each-note-when-no-lyrics-text-has-been-entered",
+      "featureTitle": "Remove the 'Lyrics' placeholder text from SheetMusic component and replace it with a '+' button that appears under each note when no lyrics text has been entered",
+      "files": [
+        "frontend/src/components/SheetMusic.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-44"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

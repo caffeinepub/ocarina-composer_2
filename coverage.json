@@ -1,0 +1,108 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-24T09:34:41.123Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 7,
+    "implemented": 5,
+    "items": [
+      {
+        "id": "REQ-38",
+        "summary": "Extend the PianoKeyboard component to include C6 note (one octave higher than the current highest note), maintaining the existing piano keyboard layout and functionality",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/PianoKeyboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/PianoKeyboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-39",
+        "summary": "Add C6 note to the default fingering chart with all 4 holes open on the ocarina, defining it as the highest note in the octave range",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/types/fingering.ts",
+          "frontend/src/utils/defaultFingeringChart.ts",
+          "frontend/src/components/FingeringEditor.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/types/fingering.ts",
+          "frontend/src/utils/defaultFingeringChart.ts",
+          "frontend/src/components/FingeringEditor.tsx"
+        ]
+      },
+      {
+        "id": "REQ-40",
+        "summary": "Update CompositionControls playback to support C6 note with synthesized ocarina-style tone at the correct frequency",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/CompositionControls.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/CompositionControls.tsx"
+        ]
+      },
+      {
+        "id": "REQ-41",
+        "summary": "Update SheetMusic component to display C6 note with proper sheet music notation on the staff",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/SheetMusic.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/SheetMusic.tsx"
+        ]
+      },
+      {
+        "id": "REQ-42",
+        "summary": "Update OcarinaTablature component to render C6 note showing all 4 holes open (unfilled circles) in the 2x2 layout",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/components/OcarinaTablature.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-43",
+        "summary": "Update OcarinaVisual play-along component to display C6 note with all 4 holes open (invisible or unfilled) during playback",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/components/OcarinaVisual.tsx"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-44",
+        "summary": "Remove the 'Lyrics' placeholder text from SheetMusic component and replace it with a '+' button that appears under each note when no lyrics text has been entered",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/SheetMusic.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/SheetMusic.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/components/CompositionControls.tsx",
+    "frontend/src/components/FingeringEditor.tsx",
+    "frontend/src/components/PianoKeyboard.tsx",
+    "frontend/src/components/SheetMusic.tsx",
+    "frontend/src/types/fingering.ts",
+    "frontend/src/utils/defaultFingeringChart.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

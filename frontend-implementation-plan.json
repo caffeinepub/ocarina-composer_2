@@ -1,0 +1,130 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Add C6 octave note and replace lyrics placeholder with + button",
+  "requirements": [
+    {
+      "id": "REQ-38",
+      "summary": "Extend PianoKeyboard component to include C6 note maintaining existing layout and functionality",
+      "acceptanceCriteria": [
+        "Piano keyboard displays C6 as an additional white key",
+        "Clicking C6 key adds the note to the composition",
+        "C6 note is visually consistent with existing piano keys"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/PianoKeyboard.tsx",
+          "operation": "modify",
+          "description": "Add C6 as an additional white key to the piano keyboard layout, extending the current note range by one octave. Update the key rendering logic to include C6 in the white keys array and ensure the onClick handler supports C6 note selection."
+        }
+      ]
+    },
+    {
+      "id": "REQ-39",
+      "summary": "Add C6 note to default fingering chart with all 4 holes open as the highest octave note",
+      "acceptanceCriteria": [
+        "C6 fingering pattern shows all 4 holes open (none covered)",
+        "C6 appears in the FingeringEditor component for configuration",
+        "Custom fingering chart supports C6 with localStorage persistence"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/types/fingering.ts",
+          "operation": "modify",
+          "description": "Add C6 to the NoteName type union to support the new octave note in the type system."
+        },
+        {
+          "path": "frontend/src/utils/defaultFingeringChart.ts",
+          "operation": "modify",
+          "description": "Add C6 entry to the default fingering chart with all 4 holes open (topLeft: false, topRight: false, bottomLeft: false, bottomRight: false), defining it as the highest note in the octave range."
+        },
+        {
+          "path": "frontend/src/components/FingeringEditor.tsx",
+          "operation": "modify",
+          "description": "Update the note selection list to include C6, ensuring it appears in the fingering configuration dialog and can be customized with localStorage persistence."
+        }
+      ]
+    },
+    {
+      "id": "REQ-40",
+      "summary": "Update CompositionControls playback to support C6 note with synthesized ocarina-style tone at correct frequency",
+      "acceptanceCriteria": [
+        "C6 note plays with Web Audio API synthesis during composition playback",
+        "C6 frequency is one octave higher than C5",
+        "Playback timing and tone quality matches existing notes"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/CompositionControls.tsx",
+          "operation": "modify",
+          "description": "Add C6 note to the frequency mapping for Web Audio API synthesis, calculating its frequency as one octave higher than C5 (1046.50 Hz for C6). Ensure the sine wave tone generation and playback timing handle C6 consistently with existing notes."
+        }
+      ]
+    },
+    {
+      "id": "REQ-41",
+      "summary": "Update SheetMusic component to display C6 note with proper staff notation",
+      "acceptanceCriteria": [
+        "C6 note renders correctly on the musical staff with ledger lines if needed",
+        "Duration symbols (whole, half, quarter, eighth) work for C6",
+        "Note selection and deletion work for C6 notes"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/SheetMusic.tsx",
+          "operation": "modify",
+          "description": "Add C6 to the sheet music rendering logic, calculating its vertical position on the staff with appropriate ledger lines. Ensure duration symbols, note selection highlighting, and deletion controls work correctly for C6 notes."
+        }
+      ]
+    },
+    {
+      "id": "REQ-42",
+      "summary": "Update OcarinaTablature component to render C6 note showing all 4 holes open in 2x2 layout",
+      "acceptanceCriteria": [
+        "C6 tablature displays 4 unfilled/open holes",
+        "Tablature respects custom hole shape settings (round, oval, square)",
+        "Visual representation is consistent with fingering chart"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/OcarinaTablature.tsx",
+          "operation": "modify",
+          "description": "Update the tablature rendering to support C6 note with all 4 holes displayed as open/unfilled circles in the 2x2 layout. Ensure the component respects custom hole shape settings and retrieves the C6 fingering pattern from the fingering chart."
+        }
+      ]
+    },
+    {
+      "id": "REQ-43",
+      "summary": "Update OcarinaVisual play-along component to display C6 with all 4 holes open during playback",
+      "acceptanceCriteria": [
+        "C6 visualization shows no covered holes during playback",
+        "All 4 holes remain unfilled/invisible when C6 is playing",
+        "Rotation and layout alignment remains consistent"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/OcarinaVisual.tsx",
+          "operation": "modify",
+          "description": "Update the visual representation to handle C6 note by displaying all 4 holes as open/unfilled during playback. Ensure the 90° counterclockwise rotation and layout alignment remain unchanged, and that C6 fingering pattern is retrieved from the fingering chart."
+        }
+      ]
+    },
+    {
+      "id": "REQ-44",
+      "summary": "Replace 'Lyrics' placeholder text with '+' button that appears under notes without lyrics",
+      "acceptanceCriteria": [
+        "Notes without lyrics display a '+' button instead of 'Lyrics' text",
+        "Clicking '+' button opens lyrics input for that note",
+        "Once lyrics are entered, the actual lyrics text displays instead of the '+' button",
+        "Empty lyrics show '+' button again if lyrics are deleted"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/SheetMusic.tsx",
+          "operation": "modify",
+          "description": "Replace the 'Lyrics' placeholder text with a '+' button that appears under each note when no lyrics have been entered. Update the conditional rendering logic so that: (1) notes without lyrics show a '+' button, (2) clicking the '+' button opens the lyrics input for that note, (3) notes with lyrics display the actual lyrics text instead of the '+' button, and (4) the '+' button reappears if lyrics are deleted or empty."
+        }
+      ]
+    }
+  ]
+}
