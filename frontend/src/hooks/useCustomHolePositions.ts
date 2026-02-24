@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { getHoleLayout, type HoleLayout } from '../utils/holeLayout';
-import type { BodyShape } from '../App';
 
 const STORAGE_KEY = 'ocarinaComposer_customHolePositions';
 
-export function useCustomHolePositions(bodyShape: BodyShape) {
+export function useCustomHolePositions(bodyShape: 'round' | 'oval' | 'square' = 'round') {
   const [customPositions, setCustomPositions] = useState<HoleLayout | null>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -14,8 +13,8 @@ export function useCustomHolePositions(bodyShape: BodyShape) {
           return parsed as HoleLayout;
         }
       }
-    } catch (error) {
-      console.error('Failed to load custom hole positions from localStorage:', error);
+    } catch {
+      // ignore
     }
     return null;
   });
@@ -27,14 +26,12 @@ export function useCustomHolePositions(bodyShape: BodyShape) {
       } else {
         localStorage.removeItem(STORAGE_KEY);
       }
-    } catch (error) {
-      console.error('Failed to save custom hole positions to localStorage:', error);
+    } catch {
+      // ignore
     }
   }, [customPositions]);
 
-  const getPositions = (): HoleLayout => {
-    return customPositions || getHoleLayout(bodyShape);
-  };
+  const positions: HoleLayout = customPositions || getHoleLayout(bodyShape);
 
   const setPosition = (holeId: keyof HoleLayout, x: number, y: number) => {
     setCustomPositions(prev => ({
@@ -43,16 +40,24 @@ export function useCustomHolePositions(bodyShape: BodyShape) {
     }));
   };
 
+  // Alias: updatePosition = setPosition
+  const updatePosition = setPosition;
+
   const resetToDefaults = () => {
     setCustomPositions(null);
   };
 
+  // Alias: resetPositions = resetToDefaults
+  const resetPositions = resetToDefaults;
+
   const hasCustomPositions = customPositions !== null;
 
   return {
-    positions: getPositions(),
+    positions,
     setPosition,
+    updatePosition,
     resetToDefaults,
+    resetPositions,
     hasCustomPositions,
   };
 }

@@ -1,272 +1,202 @@
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { Upload, X, RotateCcw } from 'lucide-react';
-import FingeringEditor from './FingeringEditor';
-import HolePositioningEditor from './HolePositioningEditor';
+import React, { useState, useRef } from 'react';
 import { useOcarinaColors } from '../hooks/useOcarinaColors';
 import { useOcarinaPhoto } from '../hooks/useOcarinaPhoto';
-import { useCustomHolePositions } from '../hooks/useCustomHolePositions';
 import { useModelRotation } from '../hooks/useModelRotation';
-import type { HoleShape, BodyShape } from '../App';
-import type { FingeringChart, FingeringPattern } from '../types/fingering';
-import { toast } from 'sonner';
+import { useModelScale } from '../hooks/useModelScale';
+import { useFingeringChart } from '../hooks/useFingeringChart';
+import FingeringEditor from './FingeringEditor';
+import SampleUploadManager from './SampleUploadManager';
+import { Separator } from '@/components/ui/separator';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
+import type { HoleShape, BodyShape } from '../types/shapes';
+import type { ModelRotation } from '../hooks/useModelRotation';
 
 interface OcarinaSettingsProps {
   holeShape: HoleShape;
-  onHoleShapeChange: (shape: HoleShape) => void;
   bodyShape: BodyShape;
+  onHoleShapeChange: (shape: HoleShape) => void;
   onBodyShapeChange: (shape: BodyShape) => void;
-  fingeringChart: FingeringChart;
-  onUpdatePattern: (note: string, pattern: FingeringPattern) => void;
-  onResetFingering: () => void;
-  onClose?: () => void;
 }
+
+const ROTATION_OPTIONS: { label: string; value: ModelRotation }[] = [
+  { label: '0°',   value: 0   },
+  { label: '90°',  value: 90  },
+  { label: '180°', value: 180 },
+  { label: '270°', value: 270 },
+];
 
 export default function OcarinaSettings({
   holeShape,
-  onHoleShapeChange,
   bodyShape,
+  onHoleShapeChange,
   onBodyShapeChange,
-  fingeringChart,
-  onUpdatePattern,
-  onResetFingering,
 }: OcarinaSettingsProps) {
-  const { colors, setHoleFill, setHoleStroke, setBodyFill, setBodyOutline, resetToDefaults } = useOcarinaColors();
+  const { colors, setHoleFill, setHoleStroke, setBodyFill, setBodyOutline } = useOcarinaColors();
   const { photoUrl, uploadPhoto, removePhoto } = useOcarinaPhoto();
-  const { positions, setPosition, resetToDefaults: resetPositions } = useCustomHolePositions(bodyShape);
   const { rotation, setRotation } = useModelRotation();
-
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    try {
-      await uploadPhoto(file);
-      toast.success('Photo uploaded successfully');
-    } catch (error) {
-      toast.error('Failed to upload photo');
-      console.error(error);
-    }
-
-    // Reset the input
-    e.target.value = '';
-  };
-
-  const handleRemovePhoto = () => {
-    removePhoto();
-    resetPositions();
-    toast.success('Photo removed');
-  };
+  const { scale, setScale } = useModelScale();
+  const { fingeringChart, updateNotePattern, resetToDefault } = useFingeringChart();
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="space-y-6">
-      {/* Shape Settings */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-wrap">
-        <div className="flex items-center gap-4">
-          <Label htmlFor="hole-shape" className="text-sm font-medium">
-            Hole Shape:
-          </Label>
-          <Select value={holeShape} onValueChange={(value) => onHoleShapeChange(value as HoleShape)}>
-            <SelectTrigger id="hole-shape" className="w-[180px]">
-              <SelectValue placeholder="Select shape" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="round">Round</SelectItem>
-              <SelectItem value="oval">Oval</SelectItem>
-              <SelectItem value="square">Square</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="space-y-6 p-4">
+      {/* Hole Shape */}
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold">Hole Shape</Label>
+        <div className="flex gap-2">
+          {(['round', 'oval', 'square'] as HoleShape[]).map((shape) => (
+            <button
+              key={shape}
+              onClick={() => onHoleShapeChange(shape)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors capitalize ${
+                holeShape === shape
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-card text-muted-foreground border-border hover:bg-muted'
+              }`}
+            >
+              {shape}
+            </button>
+          ))}
         </div>
+      </div>
 
-        <div className="flex items-center gap-4">
-          <Label htmlFor="body-shape" className="text-sm font-medium">
-            Body Shape:
-          </Label>
-          <Select value={bodyShape} onValueChange={(value) => onBodyShapeChange(value as BodyShape)}>
-            <SelectTrigger id="body-shape" className="w-[180px]">
-              <SelectValue placeholder="Select shape" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="round">Round</SelectItem>
-              <SelectItem value="oval">Oval</SelectItem>
-              <SelectItem value="square">Square</SelectItem>
-            </SelectContent>
-          </Select>
+      <Separator />
+
+      {/* Body Shape */}
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold">Body Shape</Label>
+        <div className="flex gap-2">
+          {(['round', 'oval', 'square'] as BodyShape[]).map((shape) => (
+            <button
+              key={shape}
+              onClick={() => onBodyShapeChange(shape)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors capitalize ${
+                bodyShape === shape
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-card text-muted-foreground border-border hover:bg-muted'
+              }`}
+            >
+              {shape}
+            </button>
+          ))}
         </div>
+      </div>
 
-        <FingeringEditor
-          fingeringChart={fingeringChart}
-          holeShape={holeShape}
-          onUpdatePattern={onUpdatePattern}
-          onReset={onResetFingering}
+      <Separator />
+
+      {/* Model Rotation */}
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold">Model Rotation</Label>
+        <div className="flex rounded-lg overflow-hidden border border-border">
+          {ROTATION_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setRotation(opt.value)}
+              className={`flex-1 py-1.5 text-xs font-medium transition-colors ${
+                rotation === opt.value
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-card text-muted-foreground hover:bg-muted'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <Separator />
+
+      {/* Display Size */}
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold">Display Size: {scale}%</Label>
+        <Slider
+          min={50}
+          max={200}
+          step={5}
+          value={[scale]}
+          onValueChange={([v]) => setScale(v)}
+          className="w-full"
         />
       </div>
 
       <Separator />
 
-      {/* Color Customization */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold">Color Customization</h3>
-          <Button variant="ghost" size="sm" onClick={resetToDefaults}>
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Reset Colors
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="hole-fill" className="text-xs">
-              Hole Fill (Covered)
-            </Label>
-            <div className="flex gap-2 items-center">
-              <Input
-                id="hole-fill"
+      {/* Colors */}
+      <div className="space-y-3">
+        <Label className="text-sm font-semibold">Colors</Label>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: 'Hole Fill',    value: colors.holeFill,    onChange: setHoleFill    },
+            { label: 'Hole Stroke',  value: colors.holeStroke,  onChange: setHoleStroke  },
+            { label: 'Body Fill',    value: colors.bodyFill,    onChange: setBodyFill    },
+            { label: 'Body Outline', value: colors.bodyOutline, onChange: setBodyOutline },
+          ].map(({ label, value, onChange }) => (
+            <div key={label} className="flex items-center gap-2">
+              <input
                 type="color"
-                value={colors.holeFill}
-                onChange={(e) => setHoleFill(e.target.value)}
-                className="w-16 h-10 p-1 cursor-pointer"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className="w-8 h-8 rounded cursor-pointer border border-border"
               />
-              <Input
-                type="text"
-                value={colors.holeFill}
-                onChange={(e) => setHoleFill(e.target.value)}
-                className="flex-1 text-xs font-mono"
-              />
+              <span className="text-xs text-muted-foreground">{label}</span>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="hole-stroke" className="text-xs">
-              Hole Border
-            </Label>
-            <div className="flex gap-2 items-center">
-              <Input
-                id="hole-stroke"
-                type="color"
-                value={colors.holeStroke}
-                onChange={(e) => setHoleStroke(e.target.value)}
-                className="w-16 h-10 p-1 cursor-pointer"
-              />
-              <Input
-                type="text"
-                value={colors.holeStroke}
-                onChange={(e) => setHoleStroke(e.target.value)}
-                className="flex-1 text-xs font-mono"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="body-fill" className="text-xs">
-              Body Fill
-            </Label>
-            <div className="flex gap-2 items-center">
-              <Input
-                id="body-fill"
-                type="color"
-                value={colors.bodyFill}
-                onChange={(e) => setBodyFill(e.target.value)}
-                className="w-16 h-10 p-1 cursor-pointer"
-              />
-              <Input
-                type="text"
-                value={colors.bodyFill}
-                onChange={(e) => setBodyFill(e.target.value)}
-                className="flex-1 text-xs font-mono"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="body-outline" className="text-xs">
-              Body Outline
-            </Label>
-            <div className="flex gap-2 items-center">
-              <Input
-                id="body-outline"
-                type="color"
-                value={colors.bodyOutline}
-                onChange={(e) => setBodyOutline(e.target.value)}
-                className="w-16 h-10 p-1 cursor-pointer"
-              />
-              <Input
-                type="text"
-                value={colors.bodyOutline}
-                onChange={(e) => setBodyOutline(e.target.value)}
-                className="flex-1 text-xs font-mono"
-              />
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
       <Separator />
 
       {/* Photo Upload */}
-      <div>
-        <h3 className="text-sm font-semibold mb-4">Custom Ocarina Photo</h3>
-        <div className="space-y-4">
-          {!photoUrl ? (
-            <div>
-              <Label htmlFor="photo-upload" className="cursor-pointer">
-                <div className="border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center">
-                  <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm font-medium">Upload Ocarina Photo</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    PNG, JPG, or JPEG (recommended: 400x200px)
-                  </p>
-                </div>
-              </Label>
-              <Input
-                id="photo-upload"
-                type="file"
-                accept="image/png,image/jpeg,image/jpg"
-                onChange={handlePhotoUpload}
-                className="hidden"
-              />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="relative">
-                  <img
-                    src={photoUrl}
-                    alt="Uploaded ocarina"
-                    className="w-32 h-16 object-cover rounded-lg border border-border"
-                  />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Photo uploaded</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Position the holes below to match your ocarina
-                  </p>
-                </div>
-                <Button variant="ghost" size="sm" onClick={handleRemovePhoto}>
-                  <X className="w-4 h-4 mr-2" />
-                  Remove
-                </Button>
-              </div>
-
-              <HolePositioningEditor
-                photoUrl={photoUrl}
-                holeShape={holeShape}
-                positions={positions}
-                rotation={rotation}
-                onPositionChange={setPosition}
-                onReset={resetPositions}
-                onRotationChange={setRotation}
-              />
-            </div>
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold">Ocarina Photo</Label>
+        <div className="flex gap-2">
+          <button
+            onClick={() => photoInputRef.current?.click()}
+            className="px-3 py-1.5 rounded-md text-xs font-medium border border-border bg-card text-muted-foreground hover:bg-muted transition-colors"
+          >
+            Upload Photo
+          </button>
+          {photoUrl && (
+            <button
+              onClick={removePhoto}
+              className="px-3 py-1.5 rounded-md text-xs font-medium border border-destructive text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              Remove
+            </button>
           )}
         </div>
+        <input
+          ref={photoInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) uploadPhoto(file);
+          }}
+        />
+      </div>
+
+      <Separator />
+
+      {/* Fingering Chart Editor */}
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold">Fingering Chart</Label>
+        <FingeringEditor
+          fingeringChart={fingeringChart}
+          holeShape={holeShape}
+          onUpdatePattern={updateNotePattern}
+          onReset={resetToDefault}
+        />
+      </div>
+
+      <Separator />
+
+      {/* Sample Audio */}
+      <div className="space-y-2">
+        <Label className="text-sm font-semibold">Sample Audio</Label>
+        <SampleUploadManager />
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { RotateCcw, Save, X, RotateCw } from 'lucide-react';
 import { toast } from 'sonner';
-import type { HoleShape } from '../App';
+import type { HoleShape } from '../types/shapes';
 import type { HoleLayout } from '../utils/holeLayout';
 import type { ModelRotation } from '../hooks/useModelRotation';
 
@@ -17,7 +17,6 @@ interface HolePositioningEditorProps {
   onPositionChange: (holeId: keyof HoleLayout, x: number, y: number) => void;
   onReset: () => void;
   onRotationChange: (rotation: ModelRotation) => void;
-  /** When provided, renders Save/Cancel buttons for modal usage */
   onSave?: () => void;
   onCancel?: () => void;
 }
@@ -25,11 +24,27 @@ interface HolePositioningEditorProps {
 type HoleId = keyof HoleLayout;
 
 const ROTATION_OPTIONS: { label: string; value: ModelRotation }[] = [
-  { label: '0°', value: 0 },
-  { label: '90°', value: 90 },
+  { label: '0°',   value: 0   },
+  { label: '90°',  value: 90  },
   { label: '180°', value: 180 },
   { label: '270°', value: 270 },
 ];
+
+const getHoleShapeClass = (shape: HoleShape) => {
+  switch (shape) {
+    case 'oval':   return 'rounded-full';
+    case 'square': return 'rounded-sm';
+    default:       return 'rounded-full';
+  }
+};
+
+const getHoleSize = (shape: HoleShape) => {
+  switch (shape) {
+    case 'oval':   return { width: 40, height: 56 };
+    case 'square': return { width: 48, height: 48 };
+    default:       return { width: 48, height: 48 };
+  }
+};
 
 export default function HolePositioningEditor({
   photoUrl,
@@ -47,93 +62,33 @@ export default function HolePositioningEditor({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const backgroundImage = photoUrl || STOCK_IMAGE;
-
-  const getHoleShapeClass = (shape: HoleShape) => {
-    switch (shape) {
-      case 'round':
-        return 'rounded-full';
-      case 'oval':
-        return 'rounded-full';
-      case 'square':
-        return 'rounded-sm';
-    }
-  };
-
-  const getHoleSize = (shape: HoleShape) => {
-    switch (shape) {
-      case 'round':
-        return { width: 48, height: 48 };
-      case 'oval':
-        return { width: 40, height: 56 };
-      case 'square':
-        return { width: 48, height: 48 };
-    }
-  };
-
   const holeSize = getHoleSize(holeShape);
 
   const updatePosition = (clientX: number, clientY: number) => {
     if (!draggingHole || !containerRef.current) return;
-
     const rect = containerRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
     const y = clientY - rect.top;
-
-    // Clamp to container bounds
-    const clampedX = Math.max(holeSize.width / 2, Math.min(x, rect.width - holeSize.width / 2));
+    const clampedX = Math.max(holeSize.width / 2, Math.min(x, rect.width  - holeSize.width  / 2));
     const clampedY = Math.max(holeSize.height / 2, Math.min(y, rect.height - holeSize.height / 2));
-
     onPositionChange(draggingHole, clampedX, clampedY);
     setHasUnsavedChanges(true);
   };
 
-  // Mouse event handlers
-  const handleMouseDown = (holeId: HoleId) => {
-    setDraggingHole(holeId);
-  };
+  const handleMouseDown = (holeId: HoleId) => setDraggingHole(holeId);
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => { if (draggingHole) updatePosition(e.clientX, e.clientY); };
+  const handleMouseUp   = () => setDraggingHole(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!draggingHole) return;
-    updatePosition(e.clientX, e.clientY);
-  };
-
-  const handleMouseUp = () => {
-    setDraggingHole(null);
-  };
-
-  // Touch event handlers
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>, holeId: HoleId) => {
-    e.preventDefault();
-    setDraggingHole(holeId);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (!draggingHole) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    if (touch) {
-      updatePosition(touch.clientX, touch.clientY);
-    }
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDraggingHole(null);
-  };
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>, holeId: HoleId) => { e.preventDefault(); setDraggingHole(holeId); };
+  const handleTouchMove  = (e: React.TouchEvent<HTMLDivElement>) => { if (!draggingHole) return; e.preventDefault(); const t = e.touches[0]; if (t) updatePosition(t.clientX, t.clientY); };
+  const handleTouchEnd   = (e: React.TouchEvent<HTMLDivElement>) => { e.preventDefault(); setDraggingHole(null); };
 
   useEffect(() => {
-    if (draggingHole) {
-      const handleGlobalMouseUp = () => setDraggingHole(null);
-      const handleGlobalTouchEnd = () => setDraggingHole(null);
-
-      window.addEventListener('mouseup', handleGlobalMouseUp);
-      window.addEventListener('touchend', handleGlobalTouchEnd);
-
-      return () => {
-        window.removeEventListener('mouseup', handleGlobalMouseUp);
-        window.removeEventListener('touchend', handleGlobalTouchEnd);
-      };
-    }
+    if (!draggingHole) return;
+    const up = () => setDraggingHole(null);
+    window.addEventListener('mouseup', up);
+    window.addEventListener('touchend', up);
+    return () => { window.removeEventListener('mouseup', up); window.removeEventListener('touchend', up); };
   }, [draggingHole]);
 
   const handleSave = () => {
@@ -148,22 +103,13 @@ export default function HolePositioningEditor({
     toast.success('Positions reset to default');
   };
 
-  const handleRotateCW = () => {
-    const next = ((rotation + 90) % 360) as ModelRotation;
-    onRotationChange(next);
-    setHasUnsavedChanges(true);
-  };
-
-  const handleRotateCCW = () => {
-    const next = (((rotation - 90) + 360) % 360) as ModelRotation;
-    onRotationChange(next);
-    setHasUnsavedChanges(true);
-  };
+  const handleRotateCW  = () => { onRotationChange(((rotation + 90)  % 360) as ModelRotation); setHasUnsavedChanges(true); };
+  const handleRotateCCW = () => { onRotationChange(((rotation - 90 + 360) % 360) as ModelRotation); setHasUnsavedChanges(true); };
 
   const holeLabels: Record<HoleId, string> = {
-    leftIndex: 'L. Index',
-    leftMiddle: 'L. Middle',
-    rightIndex: 'R. Index',
+    leftIndex:   'L. Index',
+    leftMiddle:  'L. Middle',
+    rightIndex:  'R. Index',
     rightMiddle: 'R. Middle',
   };
 
@@ -173,26 +119,18 @@ export default function HolePositioningEditor({
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold">Position Holes on Model</h3>
-          <p className="text-xs text-muted-foreground mt-1">
-            Drag each hole marker to match your ocarina's layout
-          </p>
+          <p className="text-xs text-muted-foreground mt-1">Drag each hole marker to match your ocarina's layout</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleResetClick}>
-            <RotateCcw className="w-4 h-4 mr-1" />
-            Reset
+            <RotateCcw className="w-4 h-4 mr-1" /> Reset
           </Button>
           {onCancel && (
             <Button variant="ghost" size="sm" onClick={onCancel}>
-              <X className="w-4 h-4 mr-1" />
-              Cancel
+              <X className="w-4 h-4 mr-1" /> Cancel
             </Button>
           )}
-          <Button
-            variant={hasUnsavedChanges ? 'default' : 'outline'}
-            size="sm"
-            onClick={handleSave}
-          >
+          <Button variant={hasUnsavedChanges ? 'default' : 'outline'} size="sm" onClick={handleSave}>
             <Save className="w-4 h-4 mr-1" />
             {hasUnsavedChanges ? 'Save' : 'Saved'}
           </Button>
@@ -213,10 +151,7 @@ export default function HolePositioningEditor({
                 variant={rotation === opt.value ? 'default' : 'outline'}
                 size="sm"
                 className="h-7 px-2 text-xs"
-                onClick={() => {
-                  onRotationChange(opt.value);
-                  setHasUnsavedChanges(true);
-                }}
+                onClick={() => { onRotationChange(opt.value); setHasUnsavedChanges(true); }}
               >
                 {opt.label}
               </Button>
@@ -228,104 +163,57 @@ export default function HolePositioningEditor({
         </div>
       </div>
 
-      {/* Preview of rotation */}
-      <div className="flex gap-6 items-start">
-        {/* Drag canvas */}
-        <div className="flex-1 min-w-0">
-          <p className="text-xs text-muted-foreground mb-2">
-            Drag holes to reposition (editing on unrotated view):
-          </p>
-          <div
-            ref={containerRef}
-            className="relative w-full bg-muted rounded-lg overflow-hidden cursor-crosshair border-2 border-border touch-none"
-            style={{ height: '224px' }}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            {/* Background image */}
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `url(${backgroundImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
+      {/* Drag canvas */}
+      <div>
+        <p className="text-xs text-muted-foreground mb-2">Drag holes to reposition:</p>
+        <div
+          ref={containerRef}
+          className="relative w-full bg-muted rounded-lg overflow-hidden select-none"
+          style={{ height: '280px', cursor: draggingHole ? 'grabbing' : 'default' }}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
+          {/* Background image */}
+          <img
+            src={backgroundImage}
+            alt="Ocarina"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+            draggable={false}
+          />
 
-            {/* Holes */}
-            {(['leftIndex', 'leftMiddle', 'rightIndex', 'rightMiddle'] as const).map((holeId) => {
-              const pos = positions[holeId];
-              const isDragging = draggingHole === holeId;
-
-              return (
-                <div
-                  key={holeId}
-                  className={cn(
-                    getHoleShapeClass(holeShape),
-                    'absolute border-4 transition-shadow cursor-move touch-none select-none',
-                    isDragging && 'ring-4 ring-primary/50 scale-110 z-10'
-                  )}
-                  style={{
-                    width: `${holeSize.width}px`,
-                    height: `${holeSize.height}px`,
-                    left: `${pos.x}px`,
-                    top: `${pos.y}px`,
-                    transform: 'translate(-50%, -50%)',
-                    backgroundColor: isDragging
-                      ? 'rgba(255, 255, 255, 0.95)'
-                      : 'rgba(255, 255, 255, 0.75)',
-                    borderColor: isDragging ? 'hsl(var(--primary))' : 'hsl(var(--foreground))',
-                  }}
-                  onMouseDown={() => handleMouseDown(holeId)}
-                  onTouchStart={(e) => handleTouchStart(e, holeId)}
-                >
-                  {/* Label */}
-                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium whitespace-nowrap bg-background/90 px-1.5 py-0.5 rounded shadow-sm border border-border">
-                    {holeLabels[holeId]}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Rotation preview */}
-        <div className="shrink-0">
-          <p className="text-xs text-muted-foreground mb-2 text-center">Preview:</p>
-          <div
-            className="relative bg-muted rounded-lg border border-border overflow-hidden"
-            style={{ width: '96px', height: '96px' }}
-          >
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-            >
+          {/* Hole markers */}
+          {(Object.keys(positions) as HoleId[]).map((holeId) => {
+            const pos = positions[holeId];
+            return (
               <div
+                key={holeId}
+                className={cn(
+                  getHoleShapeClass(holeShape),
+                  'absolute border-4 border-primary bg-primary/40 cursor-grab active:cursor-grabbing',
+                  'flex items-center justify-center shadow-lg transition-shadow hover:shadow-xl',
+                  draggingHole === holeId && 'shadow-xl scale-110'
+                )}
                 style={{
-                  transform: `rotate(${rotation}deg)`,
-                  transition: 'transform 0.3s ease',
-                  width: '72px',
-                  height: '42px',
-                  backgroundImage: `url(${backgroundImage})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  borderRadius: '50%',
-                  border: '2px solid hsl(var(--border))',
+                  width:  `${holeSize.width}px`,
+                  height: `${holeSize.height}px`,
+                  left:   `${pos.x}px`,
+                  top:    `${pos.y}px`,
+                  transform: 'translate(-50%, -50%)',
                 }}
-              />
-            </div>
-          </div>
-          <p className="text-xs text-center text-muted-foreground mt-1">{rotation}°</p>
+                onMouseDown={() => handleMouseDown(holeId)}
+                onTouchStart={(e) => handleTouchStart(e, holeId)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <span className="text-[9px] font-bold text-primary-foreground text-center leading-tight px-0.5">
+                  {holeLabels[holeId]}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
-
-      <p className="text-xs text-muted-foreground text-center">
-        {draggingHole
-          ? `Moving ${holeLabels[draggingHole]}…`
-          : 'Click or tap and drag holes to reposition'}
-      </p>
     </div>
   );
 }

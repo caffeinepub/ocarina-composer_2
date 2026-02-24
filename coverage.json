@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T10:25:50.313Z",
+  "generatedAt": "2026-02-24T12:27:46.255Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,40 +11,48 @@
     "implemented": 3,
     "items": [
       {
-        "id": "REQ-49",
-        "summary": "Add a clearly visible 'Position Holes' button directly on or immediately below the OcarinaVisual play-along component in the main App layout, so users can access hole positioning without navigating into the Settings modal.",
+        "id": "REQ-62",
+        "summary": "In the FingeringEditor component (or SampleUploadManager where presets are created), when the user clicks 'Save as Preset', display an inline text input field directly within the editor UI that allows the user to type a name for the new preset before confirming the save. The save action should only complete once a non-empty name is provided. This replaces any previous flow that skipped naming or used a popup dialog.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx"
+          "frontend/src/components/SampleUploadManager.tsx",
+          "frontend/src/components/FingeringEditor.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/App.tsx"
+          "frontend/src/components/SampleUploadManager.tsx",
+          "frontend/src/components/FingeringEditor.tsx"
         ]
       },
       {
-        "id": "REQ-50",
-        "summary": "When the 'Position Holes' button is clicked, open the HolePositioningEditor component as a modal or inline overlay directly on the OcarinaVisual component, so the user can drag and reposition each of the 4 holes (left index, left middle, right index, right middle) on the current ocarina background (stock photo or uploaded photo) without leaving the main view.",
+        "id": "REQ-63",
+        "summary": "Add a sheet music upload feature that accepts PNG/JPG image files of printed sheet music. When an image is uploaded, parse/extract the musical notes from the image using a client-side or available parsing approach, convert them to the app's internal note format (pitch, duration), and load the resulting note sequence into the current composition so the app can play it back on the ocarina.",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/components/SheetMusicUpload.tsx",
           "frontend/src/App.tsx",
-          "frontend/src/components/HolePositioningEditor.tsx"
+          "frontend/src/utils/sheetMusicParser.ts"
         ],
         "matchedFiles": [
+          "frontend/src/components/SheetMusicUpload.tsx",
           "frontend/src/App.tsx",
-          "frontend/src/components/HolePositioningEditor.tsx"
+          "frontend/src/utils/sheetMusicParser.ts"
         ]
       },
       {
-        "id": "REQ-51",
-        "summary": "Ensure the HolePositioningEditor opened from the OcarinaVisual context uses the stock grey ocarina image as the background by default when no user photo has been uploaded, matching the background currently displayed by OcarinaVisual, so the user can visually align holes to the actual image.",
+        "id": "REQ-64",
+        "summary": "Add a sheet music upload feature that accepts MusicXML (.xml, .musicxml) and MIDI (.mid, .midi) file formats. Parse the file client-side to extract note pitches and durations, map them to the ocarina's supported note range (clamping or transposing notes outside the current preset's octave range), and load the resulting sequence into the current composition for playback.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/HolePositioningEditor.tsx"
+          "frontend/src/components/SheetMusicUpload.tsx",
+          "frontend/src/utils/musicXMLParser.ts",
+          "frontend/src/utils/midiParser.ts",
+          "frontend/src/utils/noteTransposer.ts"
         ],
         "matchedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/HolePositioningEditor.tsx"
+          "frontend/src/components/SheetMusicUpload.tsx",
+          "frontend/src/utils/musicXMLParser.ts",
+          "frontend/src/utils/midiParser.ts",
+          "frontend/src/utils/noteTransposer.ts"
         ]
       }
     ]
@@ -55,10 +63,13 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/App.tsx",
-    "frontend/src/components/HolePositioningEditor.tsx",
-    "frontend/src/components/OcarinaSettings.tsx",
-    "frontend/src/components/OcarinaVisual.tsx",
-    "frontend/src/hooks/useModelRotation.ts",
+    "frontend/src/components/FingeringEditor.tsx",
+    "frontend/src/components/SampleUploadManager.tsx",
+    "frontend/src/components/SheetMusicUpload.tsx",
+    "frontend/src/utils/midiParser.ts",
+    "frontend/src/utils/musicXMLParser.ts",
+    "frontend/src/utils/noteTransposer.ts",
+    "frontend/src/utils/sheetMusicParser.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

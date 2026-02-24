@@ -10,40 +10,43 @@ export function useFingeringChart() {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Validate that it's a proper fingering chart
         if (typeof parsed === 'object' && parsed !== null) {
           return parsed as FingeringChart;
         }
       }
-    } catch (error) {
-      console.error('Failed to load fingering chart from localStorage:', error);
+    } catch {
+      // ignore
     }
     return defaultFingeringChart;
   });
 
-  // Save to localStorage whenever the chart changes
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(fingeringChart));
-    } catch (error) {
-      console.error('Failed to save fingering chart to localStorage:', error);
+    } catch {
+      // ignore
     }
   }, [fingeringChart]);
 
   const updateNotePattern = (note: string, pattern: FingeringPattern) => {
-    setFingeringChart(prev => ({
-      ...prev,
-      [note]: pattern,
-    }));
+    setFingeringChart(prev => ({ ...prev, [note]: pattern }));
   };
+
+  // Alias used by OcarinaSettings
+  const updateFingering = updateNotePattern;
 
   const resetToDefault = () => {
     setFingeringChart(defaultFingeringChart);
   };
 
+  // Alias used by OcarinaSettings
+  const resetToDefaults = resetToDefault;
+
   return {
     fingeringChart,
     updateNotePattern,
+    updateFingering,
     resetToDefault,
+    resetToDefaults,
   };
 }

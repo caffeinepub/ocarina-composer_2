@@ -1,76 +1,89 @@
 {
   "kind": "build_request",
-  "title": "Open hole positioning editor directly on the OcarinaVisual model",
+  "title": "Custom preset inline naming + Sheet music upload with ocarina playback",
   "projectName": "Ocarina Composer",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-49",
-      "text": "Add a clearly visible 'Position Holes' button directly on or immediately below the OcarinaVisual play-along component in the main App layout, so users can access hole positioning without navigating into the Settings modal.",
+      "id": "REQ-62",
+      "text": "In the FingeringEditor component (or SampleUploadManager where presets are created), when the user clicks 'Save as Preset', display an inline text input field directly within the editor UI that allows the user to type a name for the new preset before confirming the save. The save action should only complete once a non-empty name is provided. This replaces any previous flow that skipped naming or used a popup dialog.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-recent-1",
+          "msg-recent-3"
         ],
         "quotes": [
-          "Let me set the holes configuration/ positioning on the model"
+          "It says I need to set im doing a custom preset to give it a name and to save it.",
+          "1 yes"
         ]
       },
       "acceptanceCriteria": [
-        "A 'Position Holes' button is visible in the main interface near the OcarinaVisual component.",
-        "The button is accessible without opening the Settings modal.",
-        "Clicking the button opens the HolePositioningEditor component."
+        "When the user initiates saving a custom fingering or sample preset, an inline text field appears inside the editor/manager UI (not a separate modal) prompting for a preset name.",
+        "The save button is disabled or shows a validation message when the name field is empty.",
+        "After entering a name and confirming, the preset is saved with the given name and the inline text field is dismissed.",
+        "The named preset appears in the preset list/switcher after saving.",
+        "The built-in 'Synth' preset cannot be renamed or overwritten."
       ]
     },
     {
-      "id": "REQ-50",
-      "text": "When the 'Position Holes' button is clicked, open the HolePositioningEditor component as a modal or inline overlay directly on the OcarinaVisual component, so the user can drag and reposition each of the 4 holes (left index, left middle, right index, right middle) on the current ocarina background (stock photo or uploaded photo) without leaving the main view.",
+      "id": "REQ-63",
+      "text": "Add a sheet music upload feature that accepts PNG/JPG image files of printed sheet music. When an image is uploaded, parse/extract the musical notes from the image using a client-side or available parsing approach, convert them to the app's internal note format (pitch, duration), and load the resulting note sequence into the current composition so the app can play it back on the ocarina.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-recent-1",
+          "msg-recent-3"
         ],
         "quotes": [
-          "Let me set the holes configuration/ positioning on the model"
+          "I want to upload sheet music and the app will play the ocarina with it",
+          "2 Both"
         ]
       },
       "acceptanceCriteria": [
-        "The HolePositioningEditor opens overlaying or directly adjacent to the OcarinaVisual component.",
-        "The editor shows the same background image currently used by OcarinaVisual (stock image or user-uploaded photo).",
-        "All 4 holes are draggable (mouse and touch) within the editor.",
-        "A Save/Set button confirms and persists the new hole positions via the useCustomHolePositions hook.",
-        "A Cancel or Close button discards changes and closes the editor.",
-        "After saving, the OcarinaVisual component immediately reflects the updated hole positions."
+        "A sheet music upload button or drop zone is accessible from the main interface.",
+        "Supports PNG and JPG image file formats for upload.",
+        "After uploading an image, the app attempts to parse visible note pitches and durations from the image.",
+        "Successfully parsed notes are loaded into the composition's note sequence, replacing or appending to existing notes (with a clear UI choice).",
+        "The composition can then be played back using the ocarina audio engine with the imported notes.",
+        "If parsing fails or produces no notes, a clear error or warning message is shown to the user."
       ]
     },
     {
-      "id": "REQ-51",
-      "text": "Ensure the HolePositioningEditor opened from the OcarinaVisual context uses the stock grey ocarina image as the background by default when no user photo has been uploaded, matching the background currently displayed by OcarinaVisual, so the user can visually align holes to the actual image.",
+      "id": "REQ-64",
+      "text": "Add a sheet music upload feature that accepts MusicXML (.xml, .musicxml) and MIDI (.mid, .midi) file formats. Parse the file client-side to extract note pitches and durations, map them to the ocarina's supported note range (clamping or transposing notes outside the current preset's octave range), and load the resulting sequence into the current composition for playback.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-recent-1",
+          "msg-recent-3"
         ],
         "quotes": [
-          "Let me set the holes configuration/ positioning on the model"
+          "I want to upload sheet music and the app will play the ocarina with it",
+          "2 Both"
         ]
       },
       "acceptanceCriteria": [
-        "When no user photo is uploaded, the HolePositioningEditor shows the stock ocarina image as background.",
-        "When a user photo is uploaded, the HolePositioningEditor shows the user photo as background.",
-        "The hole overlay markers are positioned using the current values from useCustomHolePositions."
+        "The sheet music upload UI supports MusicXML (.xml, .musicxml) and MIDI (.mid, .midi) file formats in addition to images.",
+        "MusicXML files are parsed client-side to extract note pitch names, octave numbers, and durations.",
+        "MIDI files are parsed client-side to extract note on/off events and convert them to the app's note format with appropriate durations.",
+        "Notes outside the current ocarina preset's octave range are transposed to the nearest available octave or skipped, with a notification to the user.",
+        "The imported notes are loaded into the composition and can be played back immediately using the ocarina playback engine.",
+        "A summary (e.g. number of notes imported, any transpositions applied) is shown to the user after import."
       ]
     }
   ],
   "constraints": [
-    "Do not break or modify the existing HolePositioningEditor component's drag-and-drop logic (mouse + touch support) or Save/Reset functionality.",
-    "Do not modify any files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
-    "useCustomHolePositions hook must remain the single source of truth for hole position state and persistence."
+    "All sheet music parsing must occur client-side in the browser; no server-side AI or external API calls.",
+    "Do not modify immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui.",
+    "The existing preset data structures in useSamplePresets and useFingeringChart must remain backward-compatible with localStorage data from previous versions."
   ],
   "nonGoals": [
-    "Changing the fingering pattern (open/closed state) of holes — that is handled by FingeringEditor.",
-    "Modifying Settings modal layout or other settings sections.",
-    "Adding new hole positioning features beyond drag-and-drop repositioning."
+    "Real-time collaborative editing of sheet music.",
+    "Exporting compositions back to MusicXML or MIDI format.",
+    "Cloud storage of uploaded sheet music files.",
+    "Audio-to-note transcription (microphone or audio file input).",
+    "Support for multi-track or polyphonic MIDI (only the primary melody track will be imported)."
   ],
   "imageRequirements": {
     "required": [],

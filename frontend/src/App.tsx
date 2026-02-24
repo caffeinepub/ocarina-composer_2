@@ -1,229 +1,324 @@
-import { useState, useEffect } from 'react';
-import { ThemeProvider } from 'next-themes';
-import { Settings, Move } from 'lucide-react';
+import React, { useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/sonner';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import PianoKeyboard from './components/PianoKeyboard';
 import SheetMusic from './components/SheetMusic';
 import OcarinaVisual from './components/OcarinaVisual';
+import OcarinaSettings from './components/OcarinaSettings';
 import CompositionControls from './components/CompositionControls';
 import SongMetadata from './components/SongMetadata';
-import OcarinaSettings from './components/OcarinaSettings';
 import HolePositioningEditor from './components/HolePositioningEditor';
-import { Button } from '@/components/ui/button';
+import SheetMusicUpload from './components/SheetMusicUpload';
+import { useOcarinaPhoto } from './hooks/useOcarinaPhoto';
+import { useCustomHolePositions } from './hooks/useCustomHolePositions';
+import { useModelRotation } from './hooks/useModelRotation';
+import { useListSongs } from './hooks/useQueries';
+import { useOcarinaSize } from './hooks/useOcarinaSize';
+import type { Note, Song } from './backend';
+import type { HoleShape, BodyShape } from './types/shapes';
+import type { OcarinaSizePreset } from './types/fingering';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Toaster } from '@/components/ui/sonner';
-import { useFingeringChart } from './hooks/useFingeringChart';
-import { useOcarinaPhoto } from './hooks/useOcarinaPhoto';
-import { useCustomHolePositions } from './hooks/useCustomHolePositions';
-import { useModelRotation } from './hooks/useModelRotation';
+import { Button } from '@/components/ui/button';
+import { PlusCircle, FolderOpen, Music2 } from 'lucide-react';
 
-export interface Note {
-  pitch: string;
-  duration: 'whole' | 'half' | 'quarter' | 'eighth';
-  position: number;
-  lyrics?: string;
-}
+const queryClient = new QueryClient();
 
-export interface Song {
-  title: string;
-  description: string;
-  notes: Note[];
-}
-
-export type HoleShape = 'round' | 'oval' | 'square';
-export type BodyShape = 'round' | 'oval' | 'square';
-
-function App() {
+function AppContent() {
+  const [holeShape, setHoleShape] = useState<HoleShape>('round');
+  const [bodyShape, setBodyShape] = useState<BodyShape>('round');
   const [notes, setNotes] = useState<Note[]>([]);
+  const [selectedDuration, setSelectedDuration] = useState('quarter');
   const [selectedNoteIndex, setSelectedNoteIndex] = useState<number | null>(null);
-  const [currentDuration, setCurrentDuration] = useState<Note['duration']>('quarter');
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(null);
-  const [songMetadata, setSongMetadata] = useState<{ title: string; description: string }>({
-    title: '',
-    description: '',
-  });
-  const [holeShape, setHoleShape] = useState<HoleShape>(() => {
-    const saved = localStorage.getItem('ocarina-hole-shape');
-    return (saved as HoleShape) || 'round';
-  });
-  const [bodyShape, setBodyShape] = useState<BodyShape>(() => {
-    const saved = localStorage.getItem('ocarina-body-shape');
-    return (saved as BodyShape) || 'round';
-  });
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isPositioningOpen, setIsPositioningOpen] = useState(false);
+  const [lyrics, setLyrics] = useState('');
+  const [songTitle, setSongTitle] = useState('');
+  const [songDescription, setSongDescription] = useState('');
+  const [currentSongId, setCurrentSongId] = useState<bigint | undefined>(undefined);
+  const [showHoleEditor, setShowHoleEditor] = useState(false);
+  const [showLoadSong, setShowLoadSong] = useState(false);
+  const [showSheetMusicUpload, setShowSheetMusicUpload] = useState(false);
 
-  const { fingeringChart, updateNotePattern, resetToDefault } = useFingeringChart();
   const { photoUrl } = useOcarinaPhoto();
-  const { positions, setPosition, resetToDefaults: resetPositions } = useCustomHolePositions('round');
+  const { positions, setPosition, resetToDefaults } = useCustomHolePositions('round');
   const { rotation, setRotation } = useModelRotation();
+  const { data: songs = [] } = useListSongs();
+  const { getSize } = useOcarinaSize();
 
-  useEffect(() => {
-    localStorage.setItem('ocarina-hole-shape', holeShape);
-  }, [holeShape]);
+  const ocarinaSizePreset: OcarinaSizePreset = getSize();
 
-  useEffect(() => {
-    localStorage.setItem('ocarina-body-shape', bodyShape);
-  }, [bodyShape]);
-
-  const addNote = (pitch: string) => {
+  const handleNoteSelect = (pitch: string) => {
     const newNote: Note = {
       pitch,
-      duration: currentDuration,
-      position: notes.length,
-      lyrics: '',
+      duration: selectedDuration,
+      timingPosition: BigInt(notes.length),
     };
-    setNotes([...notes, newNote]);
+    setNotes((prev) => [...prev, newNote]);
   };
 
-  const deleteNote = (index: number) => {
-    setNotes(notes.filter((_, i) => i !== index));
-    if (selectedNoteIndex === index) {
-      setSelectedNoteIndex(null);
-    }
+  const handleNoteDelete = (index: number) => {
+    setNotes((prev) => prev.filter((_, i) => i !== index));
+    if (selectedNoteIndex === index) setSelectedNoteIndex(null);
   };
 
-  const updateNote = (index: number, updates: Partial<Note>) => {
-    setNotes(notes.map((note, i) => (i === index ? { ...note, ...updates } : note)));
-  };
-
-  const clearComposition = () => {
+  const handleClear = () => {
     setNotes([]);
     setSelectedNoteIndex(null);
-    setCurrentPlayingIndex(null);
+  };
+
+  const handleNewSong = () => {
+    setNotes([]);
+    setLyrics('');
+    setSongTitle('');
+    setSongDescription('');
+    setCurrentSongId(undefined);
+    setSelectedNoteIndex(null);
+  };
+
+  const handleLoadSong = (song: Song) => {
+    setNotes([...song.notes]);
+    setLyrics(song.lyrics);
+    setSongTitle(song.title);
+    setSongDescription(song.description);
+    setCurrentSongId(song.id);
+    setSelectedNoteIndex(null);
+    setShowLoadSong(false);
+  };
+
+  const handleSaved = (id: bigint) => {
+    setCurrentSongId(id);
+  };
+
+  const handleImportNotes = (importedNotes: Note[]) => {
+    setNotes(importedNotes);
+    setSelectedNoteIndex(null);
+    setShowSheetMusicUpload(false);
   };
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <Header />
 
-        <main className="flex-1 container mx-auto px-4 py-8">
-          <div className="max-w-7xl mx-auto space-y-8">
-            {/* Song Metadata */}
-            <SongMetadata
-              metadata={songMetadata}
-              onMetadataChange={setSongMetadata}
-              notes={notes}
-            />
+      <main className="flex-1 container mx-auto px-4 py-6 max-w-7xl">
+        {/* Top bar: song management */}
+        <div className="flex items-center gap-3 mb-6 flex-wrap">
+          <Button variant="outline" size="sm" onClick={handleNewSong} className="gap-1.5">
+            <PlusCircle className="w-4 h-4" /> New Song
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowLoadSong(true)}
+            className="gap-1.5"
+          >
+            <FolderOpen className="w-4 h-4" /> Load Song
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowSheetMusicUpload(true)}
+            className="gap-1.5"
+          >
+            <Music2 className="w-4 h-4" /> Import Sheet Music
+          </Button>
+          {currentSongId !== undefined && (
+            <span className="text-xs text-muted-foreground">
+              Editing: <span className="font-semibold text-foreground">{songTitle}</span>
+            </span>
+          )}
+        </div>
 
-            {/* Settings Button */}
-            <div className="flex justify-end">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left column: Ocarina visual + settings */}
+          <div className="space-y-4">
+            <div className="bg-card rounded-xl border border-border p-4 flex flex-col items-center gap-3">
+              <OcarinaVisual
+                holeShape={holeShape}
+                bodyShape={bodyShape}
+                activeNote={
+                  selectedNoteIndex !== null ? notes[selectedNoteIndex]?.pitch : undefined
+                }
+              />
               <Button
                 variant="outline"
-                size="default"
-                onClick={() => setIsSettingsOpen(true)}
-                className="gap-2"
+                size="sm"
+                onClick={() => setShowHoleEditor(true)}
+                className="text-xs"
               >
-                <Settings className="w-4 h-4" />
-                Settings
+                Position Holes &amp; Rotation
               </Button>
             </div>
 
-            {/* Settings Dialog */}
-            <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Ocarina Settings</DialogTitle>
-                </DialogHeader>
+            <div className="bg-card rounded-xl border border-border overflow-hidden">
+              <div className="px-4 py-3 border-b border-border">
+                <h3 className="text-sm font-semibold">Settings</h3>
+              </div>
+              <div className="max-h-[500px] overflow-y-auto">
                 <OcarinaSettings
                   holeShape={holeShape}
-                  onHoleShapeChange={setHoleShape}
                   bodyShape={bodyShape}
+                  onHoleShapeChange={setHoleShape}
                   onBodyShapeChange={setBodyShape}
-                  fingeringChart={fingeringChart}
-                  onUpdatePattern={updateNotePattern}
-                  onResetFingering={resetToDefault}
-                  onClose={() => setIsSettingsOpen(false)}
                 />
-              </DialogContent>
-            </Dialog>
+              </div>
+            </div>
+          </div>
 
-            {/* Sheet Music Display */}
-            <SheetMusic
-              notes={notes}
-              selectedNoteIndex={selectedNoteIndex}
-              onNoteSelect={setSelectedNoteIndex}
-              onNoteDelete={deleteNote}
-              onLyricsUpdate={(index, lyrics) => updateNote(index, { lyrics })}
-              currentPlayingIndex={currentPlayingIndex}
-              holeShape={holeShape}
-              fingeringChart={fingeringChart}
-            />
-
-            {/* Ocarina Visual */}
-            <div className="relative">
-              <OcarinaVisual
-                currentNote={
-                  currentPlayingIndex !== null ? notes[currentPlayingIndex]?.pitch : null
-                }
-                holeShape={holeShape}
-                bodyShape="round"
-                fingeringChart={fingeringChart}
+          {/* Right columns: Song info, controls, sheet music, piano */}
+          <div className="lg:col-span-2 space-y-4">
+            {/* Song metadata */}
+            <div className="bg-card rounded-xl border border-border overflow-hidden">
+              <div className="px-4 py-3 border-b border-border">
+                <h3 className="text-sm font-semibold">Song Info</h3>
+              </div>
+              <SongMetadata
+                title={songTitle}
+                description={songDescription}
+                lyrics={lyrics}
+                notes={notes}
+                songId={currentSongId}
+                onTitleChange={setSongTitle}
+                onDescriptionChange={setSongDescription}
+                onLyricsChange={setLyrics}
+                onSaved={handleSaved}
               />
+            </div>
 
-              {/* Position Holes button */}
-              <div className="flex justify-center mt-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsPositioningOpen(true)}
-                  className="gap-2"
-                >
-                  <Move className="w-4 h-4" />
-                  Position Holes &amp; Rotation
-                </Button>
+            {/* Composition controls */}
+            <div className="bg-card rounded-xl border border-border overflow-hidden">
+              <div className="px-4 py-3 border-b border-border">
+                <h3 className="text-sm font-semibold">Composition</h3>
+              </div>
+              <CompositionControls
+                notes={notes}
+                selectedDuration={selectedDuration}
+                onDurationChange={setSelectedDuration}
+                onClear={handleClear}
+              />
+            </div>
+
+            {/* Sheet music */}
+            <div className="bg-card rounded-xl border border-border overflow-hidden">
+              <div className="px-4 py-3 border-b border-border">
+                <h3 className="text-sm font-semibold">Sheet Music</h3>
+              </div>
+              <div className="p-4">
+                <SheetMusic
+                  notes={notes}
+                  lyrics={lyrics}
+                  selectedNoteIndex={selectedNoteIndex}
+                  onNoteSelect={setSelectedNoteIndex}
+                  onNoteDelete={handleNoteDelete}
+                  onLyricsChange={setLyrics}
+                  holeShape={holeShape}
+                />
               </div>
             </div>
 
-            {/* Hole Positioning Dialog */}
-            <Dialog open={isPositioningOpen} onOpenChange={setIsPositioningOpen}>
-              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Configure Hole Positions &amp; Model Rotation</DialogTitle>
-                </DialogHeader>
-                <HolePositioningEditor
-                  photoUrl={photoUrl}
-                  holeShape={holeShape}
-                  positions={positions}
-                  rotation={rotation}
-                  onPositionChange={setPosition}
-                  onReset={resetPositions}
-                  onRotationChange={setRotation}
-                  onSave={() => setIsPositioningOpen(false)}
-                  onCancel={() => setIsPositioningOpen(false)}
-                />
-              </DialogContent>
-            </Dialog>
-
-            {/* Composition Controls */}
-            <CompositionControls
-              notes={notes}
-              currentDuration={currentDuration}
-              onDurationChange={setCurrentDuration}
-              isPlaying={isPlaying}
-              onPlayToggle={setIsPlaying}
-              onClear={clearComposition}
-              onPlayingIndexChange={setCurrentPlayingIndex}
-            />
-
-            {/* Piano Keyboard */}
-            <PianoKeyboard onNoteClick={addNote} disabled={isPlaying} />
+            {/* Piano keyboard */}
+            <div className="bg-card rounded-xl border border-border overflow-hidden">
+              <div className="px-4 py-3 border-b border-border">
+                <h3 className="text-sm font-semibold">Piano Keyboard</h3>
+              </div>
+              <div className="p-4 overflow-x-auto">
+                <PianoKeyboard onNoteSelect={handleNoteSelect} />
+              </div>
+            </div>
           </div>
-        </main>
+        </div>
+      </main>
 
-        <Footer />
-        <Toaster />
-      </div>
-    </ThemeProvider>
+      <Footer />
+
+      {/* Hole Positioning Editor Dialog */}
+      <Dialog open={showHoleEditor} onOpenChange={setShowHoleEditor}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Position Holes &amp; Rotation</DialogTitle>
+          </DialogHeader>
+          <HolePositioningEditor
+            photoUrl={photoUrl}
+            holeShape={holeShape}
+            rotation={rotation}
+            onRotationChange={setRotation}
+            positions={positions}
+            onPositionChange={setPosition}
+            onReset={resetToDefaults}
+            onSave={() => setShowHoleEditor(false)}
+            onCancel={() => setShowHoleEditor(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Load Song Dialog */}
+      <Dialog open={showLoadSong} onOpenChange={setShowLoadSong}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Load Song</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 py-2">
+            {songs.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No songs saved yet. Create and save a song first.
+              </p>
+            ) : (
+              <div className="space-y-2 max-h-80 overflow-y-auto">
+                {songs.map((song) => (
+                  <button
+                    key={song.id.toString()}
+                    onClick={() => handleLoadSong(song)}
+                    className="w-full text-left px-4 py-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors"
+                  >
+                    <div className="font-medium text-sm">{song.title}</div>
+                    {song.description && (
+                      <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                        {song.description}
+                      </div>
+                    )}
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {song.notes.length} note{song.notes.length !== 1 ? 's' : ''}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Sheet Music Import Dialog */}
+      <Dialog open={showSheetMusicUpload} onOpenChange={setShowSheetMusicUpload}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Import Sheet Music</DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
+            <p className="text-xs text-muted-foreground mb-4">
+              Upload sheet music to automatically load notes into your composition. Supports PNG/JPG images, MusicXML, and MIDI files. Notes will be transposed to fit the <strong>{ocarinaSizePreset}</strong> ocarina range.
+            </p>
+            <SheetMusicUpload
+              currentNotes={notes}
+              ocarinaSizePreset={ocarinaSizePreset}
+              onImport={handleImportNotes}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Toaster richColors />
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppContent />
+    </QueryClientProvider>
+  );
+}

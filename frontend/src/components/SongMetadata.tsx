@@ -1,88 +1,117 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Save, AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Textarea } from '@/components/ui/textarea';
+import { useCreateSong, useUpdateSong } from '../hooks/useQueries';
 import { toast } from 'sonner';
-import type { Note } from '../App';
+import type { Note } from '../backend';
+import { Loader2 } from 'lucide-react';
 
 interface SongMetadataProps {
-  metadata: { title: string; description: string };
-  onMetadataChange: (metadata: { title: string; description: string }) => void;
+  title: string;
+  description: string;
+  lyrics: string;
   notes: Note[];
+  songId?: bigint;
+  onTitleChange: (title: string) => void;
+  onDescriptionChange: (description: string) => void;
+  onLyricsChange: (lyrics: string) => void;
+  onSaved?: (id: bigint) => void;
 }
 
-export default function SongMetadata({ metadata, onMetadataChange, notes }: SongMetadataProps) {
-  const [isSaving, setIsSaving] = useState(false);
+export default function SongMetadata({
+  title,
+  description,
+  lyrics,
+  notes,
+  songId,
+  onTitleChange,
+  onDescriptionChange,
+  onLyricsChange,
+  onSaved,
+}: SongMetadataProps) {
+  const createSong = useCreateSong();
+  const updateSong = useUpdateSong();
+
+  const isSaving = createSong.isPending || updateSong.isPending;
 
   const handleSave = async () => {
-    if (!metadata.title.trim()) {
+    if (!title.trim()) {
       toast.error('Please enter a song title');
       return;
     }
-
+    if (!description.trim()) {
+      toast.error('Please enter a description');
+      return;
+    }
     if (notes.length === 0) {
-      toast.error('Please add some notes to your composition');
+      toast.error('Add at least one note before saving');
       return;
     }
 
-    setIsSaving(true);
-    
-    // Simulate save (backend not implemented)
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast.success('Song saved successfully!', {
-      description: `"${metadata.title}" has been saved to your browser.`,
-    });
-    
-    setIsSaving(false);
+    try {
+      if (songId !== undefined) {
+        await updateSong.mutateAsync({ id: songId, title, description, notes, lyrics });
+        toast.success('Song updated successfully!');
+        onSaved?.(songId);
+      } else {
+        const newId = await createSong.mutateAsync({ title, description, notes, lyrics });
+        toast.success('Song saved online!');
+        onSaved?.(newId);
+      }
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to save song');
+    }
   };
 
   return (
-    <div className="bg-card rounded-xl border border-border p-6 shadow-lg">
-      <h2 className="text-lg font-semibold mb-4 text-foreground">Song Information</h2>
-      
-      <Alert className="mb-4 bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900">
-        <AlertCircle className="h-4 w-4 text-amber-600" />
-        <AlertDescription className="text-amber-800 dark:text-amber-200">
-          Note: Backend storage is not yet implemented. Songs are saved locally in your browser.
-        </AlertDescription>
-      </Alert>
-
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="title">Song Title</Label>
-          <Input
-            id="title"
-            value={metadata.title}
-            onChange={(e) => onMetadataChange({ ...metadata, title: e.target.value })}
-            placeholder="Enter song title..."
-            className="mt-1.5"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="description">Description</Label>
-          <Textarea
-            id="description"
-            value={metadata.description}
-            onChange={(e) => onMetadataChange({ ...metadata, description: e.target.value })}
-            placeholder="Add a description for your composition..."
-            className="mt-1.5 min-h-[80px]"
-          />
-        </div>
-
-        <Button
-          onClick={handleSave}
-          disabled={isSaving || !metadata.title.trim() || notes.length === 0}
-          className="w-full sm:w-auto gap-2"
-        >
-          <Save className="w-4 h-4" />
-          {isSaving ? 'Saving...' : 'Save Song'}
-        </Button>
+    <div className="space-y-4 p-4">
+      <div className="space-y-1.5">
+        <Label htmlFor="song-title" className="text-sm font-semibold">
+          Song Title
+        </Label>
+        <Input
+          id="song-title"
+          value={title}
+          onChange={(e) => onTitleChange(e.target.value)}
+          placeholder="Enter song title..."
+          className="h-9"
+        />
       </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="song-description" className="text-sm font-semibold">
+          Description
+        </Label>
+        <Textarea
+          id="song-description"
+          value={description}
+          onChange={(e) => onDescriptionChange(e.target.value)}
+          placeholder="Describe your song..."
+          rows={2}
+          className="resize-none text-sm"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="song-lyrics" className="text-sm font-semibold">
+          Lyrics
+        </Label>
+        <Textarea
+          id="song-lyrics"
+          value={lyrics}
+          onChange={(e) => onLyricsChange(e.target.value)}
+          placeholder="Add lyrics..."
+          rows={3}
+          className="resize-none text-sm"
+        />
+      </div>
+
+      <Button onClick={handleSave} disabled={isSaving} className="w-full gap-2">
+        {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+        {isSaving ? 'Saving...' : songId !== undefined ? 'Update Song' : 'Save Song Online'}
+      </Button>
     </div>
   );
 }

@@ -1,65 +1,96 @@
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import React, { useState, useEffect } from 'react';
+import { OcarinaSizePreset, getNotesForPreset } from '../types/fingering';
 
-interface PianoKeyboardProps {
-  onNoteClick: (pitch: string) => void;
-  disabled?: boolean;
+const STORAGE_KEY = 'ocarinaSizePreset';
+
+function getSavedPreset(): OcarinaSizePreset {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored === 'Small' || stored === 'Medium' || stored === 'Large') return stored;
+  return 'Medium';
 }
 
-const whiteKeys = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C6'];
-const blackKeys = ['C#', 'D#', null, 'F#', 'G#', 'A#', null];
+interface PianoKeyboardProps {
+  onNoteSelect: (note: string) => void;
+}
 
-export default function PianoKeyboard({ onNoteClick, disabled }: PianoKeyboardProps) {
+// White key note names within an octave (no sharps/flats for 4-hole ocarina)
+const WHITE_NOTE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+export default function PianoKeyboard({ onNoteSelect }: PianoKeyboardProps) {
+  const [preset, setPreset] = useState<OcarinaSizePreset>(getSavedPreset);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as OcarinaSizePreset;
+      setPreset(detail);
+    };
+    window.addEventListener('ocarinaSizeChanged', handler);
+    return () => window.removeEventListener('ocarinaSizeChanged', handler);
+  }, []);
+
+  const notes = getNotesForPreset(preset);
+
+  // Separate white and black keys — for 4-hole ocarina we only have natural notes
+  const whiteNotes = notes.filter((n) => !n.includes('#'));
+
+  const handlePresetChange = (p: OcarinaSizePreset) => {
+    localStorage.setItem(STORAGE_KEY, p);
+    setPreset(p);
+    window.dispatchEvent(new CustomEvent('ocarinaSizeChanged', { detail: p }));
+  };
+
+  const presetLabels: Record<OcarinaSizePreset, string> = {
+    Small: 'Small (High)',
+    Medium: 'Medium',
+    Large: 'Large (Low)',
+  };
+
+  const octaveLabel: Record<OcarinaSizePreset, string> = {
+    Small: 'C6–C7',
+    Medium: 'C5–C6',
+    Large: 'C4–C5',
+  };
+
   return (
-    <div className="bg-card rounded-xl border border-border p-6 shadow-lg">
-      <h2 className="text-lg font-semibold mb-4 text-foreground">Piano Keyboard</h2>
-      <p className="text-sm text-muted-foreground mb-4">
-        Click keys to add notes to your composition
-      </p>
-      
-      <div className="relative inline-block">
-        {/* White keys */}
-        <div className="flex gap-0.5">
-          {whiteKeys.map((note) => (
-            <Button
-              key={note}
-              onClick={() => onNoteClick(note)}
-              disabled={disabled}
-              className={cn(
-                'w-16 h-48 rounded-b-lg border-2 border-gray-300 bg-white hover:bg-gray-100',
-                'text-gray-800 font-semibold shadow-md transition-all',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                'active:translate-y-1 active:shadow-sm'
-              )}
-              variant="outline"
+    <div className="flex flex-col items-center gap-3">
+      {/* Ocarina Size Preset Selector */}
+      <div className="flex flex-col items-center gap-1">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          Ocarina Size
+        </span>
+        <div className="flex rounded-lg overflow-hidden border border-border">
+          {(['Small', 'Medium', 'Large'] as OcarinaSizePreset[]).map((p) => (
+            <button
+              key={p}
+              onClick={() => handlePresetChange(p)}
+              className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                preset === p
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-card text-muted-foreground hover:bg-muted'
+              }`}
             >
-              <span className="mt-auto">{note}</span>
-            </Button>
+              {presetLabels[p]}
+            </button>
           ))}
         </div>
+        <span className="text-xs text-muted-foreground">{octaveLabel[preset]}</span>
+      </div>
 
-        {/* Black keys */}
-        <div className="absolute top-0 left-0 flex pointer-events-none">
-          {blackKeys.map((note, index) => (
-            <div key={index} className="w-16 flex justify-end pr-2">
-              {note && (
-                <Button
-                  onClick={() => onNoteClick(note)}
-                  disabled={disabled}
-                  className={cn(
-                    'w-10 h-28 rounded-b-md bg-gray-900 hover:bg-gray-700 border-2 border-gray-800',
-                    'text-white text-xs font-semibold shadow-lg pointer-events-auto',
-                    'disabled:opacity-50 disabled:cursor-not-allowed',
-                    'active:translate-y-1 active:shadow-sm z-10'
-                  )}
-                  variant="outline"
-                >
-                  <span className="mt-auto">{note}</span>
-                </Button>
-              )}
-            </div>
-          ))}
-        </div>
+      {/* Piano Keys */}
+      <div className="relative flex" style={{ height: '100px' }}>
+        {whiteNotes.map((note, i) => (
+          <button
+            key={note}
+            onClick={() => onNoteSelect(note)}
+            className="relative border border-border bg-white hover:bg-amber-50 active:bg-amber-100 transition-colors rounded-b-md shadow-sm"
+            style={{ width: '44px', height: '100px', marginRight: '2px' }}
+            title={note}
+          >
+            <span className="absolute bottom-2 left-0 right-0 text-center text-xs font-medium text-stone-600">
+              {note}
+            </span>
+          </button>
+        ))}
       </div>
     </div>
   );

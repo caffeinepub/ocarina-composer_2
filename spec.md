@@ -1,14 +1,15 @@
 # Specification
 
 ## Summary
-**Goal:** Allow users to open the hole positioning editor directly from the main view by adding a "Position Holes" button near the OcarinaVisual component, without needing to navigate into the Settings modal.
+**Goal:** Add inline preset naming when saving custom presets, and add sheet music import (image, MusicXML, and MIDI) that loads parsed notes into the ocarina composition for playback.
 
 **Planned changes:**
-- Add a "Position Holes" button visible in the main interface, directly on or immediately below the OcarinaVisual component.
-- When clicked, open the HolePositioningEditor as a modal or inline overlay on top of the OcarinaVisual component.
-- The HolePositioningEditor uses the same background image as OcarinaVisual (stock grey ocarina image by default, or user-uploaded photo if available).
-- All 4 holes remain draggable (mouse and touch) within the editor.
-- A Save button persists new hole positions via the existing `useCustomHolePositions` hook; a Cancel/Close button discards changes.
-- After saving, OcarinaVisual immediately reflects the updated hole positions.
+- In the FingeringEditor / SampleUploadManager, replace any popup or unnamed save flow with an inline text input that appears when "Save as Preset" is clicked; the save button is disabled until a non-empty name is entered, and the field is dismissed after saving.
+- Add a sheet music upload UI (button or drop zone) accessible from the main interface supporting PNG, JPG, MusicXML (.xml, .musicxml), and MIDI (.mid, .midi) files.
+- Parse uploaded image files client-side to extract note pitches and durations and load them into the composition's note sequence.
+- Parse MusicXML files client-side to extract pitch names, octave numbers, and durations; parse MIDI files client-side to extract note on/off events and convert to the app's note format.
+- Transpose or clamp notes outside the current ocarina preset's supported range to the nearest available octave, notifying the user of any adjustments.
+- Allow the user to choose whether imported notes replace or append to the existing composition.
+- Show a summary after import (notes imported, transpositions applied) and a clear error/warning if parsing fails or produces no notes.
 
-**User-visible outcome:** Users can click "Position Holes" directly on the main screen to drag and reposition the 4 ocarina holes on the actual ocarina image, then save without ever opening the Settings modal.
+**User-visible outcome:** Users can name custom presets inline without a popup dialog, and can upload sheet music images or files (MusicXML/MIDI) to automatically populate the composition with parsed notes that play back on the ocarina.

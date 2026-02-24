@@ -1,66 +1,91 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Open hole positioning editor directly on the OcarinaVisual model",
+  "title": "Custom preset inline naming + Sheet music upload with ocarina playback",
   "requirements": [
     {
-      "id": "REQ-49",
-      "summary": "Add a 'Position Holes' button near OcarinaVisual in the main App layout for direct access to hole positioning without opening Settings modal",
+      "id": "REQ-62",
+      "summary": "Add inline text input for naming custom presets directly in the FingeringEditor/SampleUploadManager UI before saving",
       "acceptanceCriteria": [
-        "A 'Position Holes' button is visible in the main interface near the OcarinaVisual component.",
-        "The button is accessible without opening the Settings modal.",
-        "Clicking the button opens the HolePositioningEditor component."
+        "When the user initiates saving a custom fingering or sample preset, an inline text field appears inside the editor/manager UI (not a separate modal) prompting for a preset name.",
+        "The save button is disabled or shows a validation message when the name field is empty.",
+        "After entering a name and confirming, the preset is saved with the given name and the inline text field is dismissed.",
+        "The named preset appears in the preset list/switcher after saving.",
+        "The built-in 'Synth' preset cannot be renamed or overwritten."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/components/SampleUploadManager.tsx",
           "operation": "modify",
-          "description": "Add state to control HolePositioningEditor modal visibility. Add a 'Position Holes' button immediately below the OcarinaVisual component in the main layout. Wire the button's onClick handler to open the HolePositioningEditor as a modal or overlay. Ensure the button is styled consistently with the existing UI using shadcn/ui Button component."
+          "description": "Replace the current 'Save as Preset' flow with an inline naming UI. When the user clicks 'Save as Preset', display an inline text input field directly within the SampleUploadManager component (not a dialog). Add a confirm button that is disabled when the input is empty. On confirm with a non-empty name, call the existing preset save logic and dismiss the inline input. Ensure the built-in 'Synth' preset is protected from being overwritten."
+        },
+        {
+          "path": "frontend/src/components/FingeringEditor.tsx",
+          "operation": "modify",
+          "description": "Add inline preset naming UI to the FingeringEditor dialog. When the user initiates saving a custom fingering chart, display an inline text input field within the dialog that prompts for a preset name. The save action should only complete once a non-empty name is provided. Disable or hide the save button when the name field is empty, and show validation feedback."
         }
       ]
     },
     {
-      "id": "REQ-50",
-      "summary": "Open HolePositioningEditor as a modal/overlay on OcarinaVisual when 'Position Holes' is clicked, allowing drag-and-drop repositioning of all 4 holes with Save and Cancel actions",
+      "id": "REQ-63",
+      "summary": "Add PNG/JPG sheet music image upload with client-side OCR parsing to extract notes and load them into the composition",
       "acceptanceCriteria": [
-        "The HolePositioningEditor opens overlaying or directly adjacent to the OcarinaVisual component.",
-        "The editor shows the same background image currently used by OcarinaVisual (stock image or user-uploaded photo).",
-        "All 4 holes are draggable (mouse and touch) within the editor.",
-        "A Save/Set button confirms and persists the new hole positions via the useCustomHolePositions hook.",
-        "A Cancel or Close button discards changes and closes the editor.",
-        "After saving, the OcarinaVisual component immediately reflects the updated hole positions."
+        "A sheet music upload button or drop zone is accessible from the main interface.",
+        "Supports PNG and JPG image file formats for upload.",
+        "After uploading an image, the app attempts to parse visible note pitches and durations from the image.",
+        "Successfully parsed notes are loaded into the composition's note sequence, replacing or appending to existing notes (with a clear UI choice).",
+        "The composition can then be played back using the ocarina audio engine with the imported notes.",
+        "If parsing fails or produces no notes, a clear error or warning message is shown to the user."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Conditionally render the HolePositioningEditor component when the modal state is open. Pass the current ocarina photo (from useOcarinaPhoto hook), body shape, and hole positions (from useCustomHolePositions hook) as props to HolePositioningEditor. Wire the onSave callback to persist positions via useCustomHolePositions.setHolePosition and close the modal. Wire the onCancel/onClose callback to close the modal without saving. Ensure the modal overlays the main content using a Dialog or Sheet component from shadcn/ui."
+          "path": "frontend/src/components/SheetMusicUpload.tsx",
+          "operation": "create",
+          "description": "Create a new component that provides a file upload button and drop zone for PNG/JPG sheet music images. On file selection, read the image file and attempt to parse it using a client-side OMR (Optical Music Recognition) library or approach. Extract note pitches and durations from the parsed result and convert them to the app's internal Note format (pitch: string, duration: string, timingPosition: bigint). Provide a UI option to either replace or append the imported notes to the current composition. Display a summary of imported notes or an error message if parsing fails. Ensure all parsing happens client-side in the browser with no external API calls."
         },
         {
-          "path": "frontend/src/components/HolePositioningEditor.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Ensure the component accepts photo, bodyShape, and current hole positions as props. Update the background rendering logic to use the passed photo prop (user-uploaded or stock image frontend/public/assets/generated/ocarina-stock-grey.dim_400x400.png). Verify that the existing drag-and-drop logic (mouse and touch support) remains intact. Ensure the Save button calls the parent-provided onSave callback with the updated hole positions. Ensure the Cancel/Close button calls the parent-provided onCancel callback. Do not modify the core drag-and-drop or Save/Reset functionality."
+          "description": "Import and render the new SheetMusicUpload component in the main App layout, placing it in an appropriate section (e.g., near the composition controls or sheet music display). Pass the current notes state and the setNotes function as props so the component can update the composition with imported notes. Ensure the component is accessible and visible to users."
+        },
+        {
+          "path": "frontend/src/utils/sheetMusicParser.ts",
+          "operation": "create",
+          "description": "Create a utility module that provides a function to parse PNG/JPG sheet music images client-side. Use a client-side OMR library (e.g., Audiveris.js, OpenSheetMusicDisplay parsing capabilities, or a custom canvas-based approach) to extract staff lines, note heads, stems, and duration symbols. Return an array of parsed notes with pitch (e.g., 'C4', 'D5') and duration (e.g., 'quarter', 'half') that can be converted to the app's Note type. Handle errors gracefully and return an empty array or throw a descriptive error if parsing fails."
         }
       ]
     },
     {
-      "id": "REQ-51",
-      "summary": "Ensure HolePositioningEditor uses the stock grey ocarina image as default background when no user photo is uploaded, matching OcarinaVisual's current display",
+      "id": "REQ-64",
+      "summary": "Add MusicXML and MIDI file upload with client-side parsing to extract notes, transpose them to the ocarina's range, and load them into the composition",
       "acceptanceCriteria": [
-        "When no user photo is uploaded, the HolePositioningEditor shows the stock ocarina image as background.",
-        "When a user photo is uploaded, the HolePositioningEditor shows the user photo as background.",
-        "The hole overlay markers are positioned using the current values from useCustomHolePositions."
+        "The sheet music upload UI supports MusicXML (.xml, .musicxml) and MIDI (.mid, .midi) file formats in addition to images.",
+        "MusicXML files are parsed client-side to extract note pitch names, octave numbers, and durations.",
+        "MIDI files are parsed client-side to extract note on/off events and convert them to the app's note format with appropriate durations.",
+        "Notes outside the current ocarina preset's octave range are transposed to the nearest available octave or skipped, with a notification to the user.",
+        "The imported notes are loaded into the composition and can be played back immediately using the ocarina playback engine.",
+        "A summary (e.g. number of notes imported, any transpositions applied) is shown to the user after import."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/components/SheetMusicUpload.tsx",
           "operation": "modify",
-          "description": "When rendering HolePositioningEditor, pass the photo prop from useOcarinaPhoto.photo. If photo is null or undefined, pass the workspace path frontend/public/assets/generated/ocarina-stock-grey.dim_400x400.png as a fallback. Ensure the same logic is used by OcarinaVisual for consistency."
+          "description": "Extend the SheetMusicUpload component to support MusicXML (.xml, .musicxml) and MIDI (.mid, .midi) file formats in addition to PNG/JPG images. Update the file input to accept these additional formats. Route uploaded files to the appropriate parser (image, MusicXML, or MIDI) based on file extension. After parsing, transpose notes that fall outside the current ocarina preset's range to the nearest available octave (using the current preset from useOcarinaSize and the note range from types/fingering.ts). Display a summary showing the number of notes imported and any transpositions applied. Show a warning if notes were skipped or transposed."
         },
         {
-          "path": "frontend/src/components/HolePositioningEditor.tsx",
-          "operation": "modify",
-          "description": "Update the background image rendering to accept the photo prop and display it as the background. If the photo prop is the stock image path, render it as a static asset. If the photo prop is a user-uploaded data URL, render it directly. Ensure the hole markers overlay the background correctly using current hole positions from props. Verify the component's usage instructions before implementing."
+          "path": "frontend/src/utils/musicXMLParser.ts",
+          "operation": "create",
+          "description": "Create a utility module that parses MusicXML files client-side. Use a library like musicxml-parser or parse the XML manually using DOMParser to extract note elements with pitch names (step, octave) and durations (type, dots). Convert the extracted data to the app's Note format with pitch (e.g., 'C4'), duration (e.g., 'quarter'), and timingPosition (calculated cumulatively). Return an array of parsed notes. Handle parsing errors gracefully and return an empty array or throw a descriptive error if the file is invalid."
+        },
+        {
+          "path": "frontend/src/utils/midiParser.ts",
+          "operation": "create",
+          "description": "Create a utility module that parses MIDI files client-side. Use a library like @tonejs/midi or midi-parser-js to extract MIDI note on/off events from the primary melody track. Convert MIDI note numbers to pitch names with octaves (e.g., 60 → 'C4') and calculate durations from note on/off timing. Convert the extracted data to the app's Note format with pitch, duration, and timingPosition. Return an array of parsed notes. Handle polyphonic MIDI by selecting only the primary melody track or the first track with notes. Handle parsing errors gracefully and return an empty array or throw a descriptive error if the file is invalid."
+        },
+        {
+          "path": "frontend/src/utils/noteTransposer.ts",
+          "operation": "create",
+          "description": "Create a utility module that transposes notes to fit within the current ocarina preset's range. Accept an array of notes and the current ocarina size preset (Small/Medium/Large). Use the note range constants from types/fingering.ts to determine the available notes for the preset. For each note, if it falls outside the range, transpose it up or down by octaves to the nearest available octave. If a note cannot be transposed into range, optionally skip it. Return the transposed notes array and a summary object indicating how many notes were transposed and how many were skipped."
         }
       ]
     }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 25,
-  "summary": "4-hole ocarina tablature music writing app with standard sheet music notation, piano keyboard interface, note editing, lyrics support, ocarina sound playback, and visual fingering illustrations",
+  "projectStateVersion": 31,
+  "summary": "4-hole ocarina tablature music writing app with standard sheet music notation, piano keyboard interface, note editing, lyrics support, ocarina sound playback, visual fingering illustrations, online backend song storage, ocarina size presets controlling octave range, and sample audio upload with named presets",
   "architectural_notes": [
     "Support notes A-G plus sharps for 4-hole ocarina range",
     "Combine traditional tablature with standard sheet music notation",
@@ -384,6 +384,94 @@
         "REQ-51"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-a-size-scale-control-in-ocarinasettings-and-expose-it-via-a-hook-persisted-in-localstorage-that-allows-users-to-adjust-the-display-size-of-the-ocarinavisual-play-along-component-the-control-should-offer-a-range-slider-e-g-50-200-with-a-default-of-100-and-the-resulting-scale-value-should-be-applied-to-the-ocarinavisual-container-via-a-css-transform-or-equivalent-scaling-mechanism",
+      "title": "Add a size/scale control in OcarinaSettings (and expose it via a hook persisted in localStorage) that allows users to adjust the display size of the OcarinaVisual play-along component. The control should offer a range slider (e.g. 50%–200%) with a default of 100%, and the resulting scale value should be applied to the OcarinaVisual container via a CSS transform or equivalent scaling mechanism.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-rotation-control-in-ocarinasettings-that-allows-users-to-set-the-ocarinavisual-play-along-component-rotation-to-any-angle-in-90-increments-0-90-180-270-this-should-update-the-existing-usemodelrotation-hook-value-and-persist-in-localstorage-expose-a-numeric-input-or-segmented-control-in-the-settings-ui-for-selecting-the-rotation-angle",
+      "title": "Add a rotation control in OcarinaSettings that allows users to set the OcarinaVisual play-along component rotation to any angle in 90° increments (0°, 90°, 180°, 270°). This should update the existing useModelRotation hook value and persist in localStorage. Expose a numeric input or segmented control in the settings UI for selecting the rotation angle.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-ocarinavisual-play-along-component-so-that-when-a-user-has-uploaded-a-photo-via-useocarinaphoto-that-uploaded-photo-is-used-as-the-primary-background-image-replacing-the-stock-grey-ocarina-illustration-the-component-should-already-support-this-verify-and-ensure-the-uploaded-photo-fully-replaces-the-default-stock-image-without-fallback-blending",
+      "title": "Update the OcarinaVisual play-along component so that when a user has uploaded a photo via useOcarinaPhoto, that uploaded photo is used as the primary background image replacing the stock grey ocarina illustration. The component should already support this — verify and ensure the uploaded photo fully replaces the default stock image without fallback blending.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-all-localstorage-based-song-saving-in-the-frontend-songmetadata-component-and-related-hooks-usequeries-with-internet-computer-backend-calls-via-the-actor-the-save-button-should-persist-the-full-composition-title-description-notes-lyrics-to-the-backend-load-and-list-songs-from-the-backend-instead-of-local-storage-remove-any-local-only-song-persistence-fallback",
+      "title": "Replace all localStorage-based song saving in the frontend (SongMetadata component and related hooks/useQueries) with Internet Computer backend calls via the actor. The save button should persist the full composition (title, description, notes, lyrics) to the backend. Load and list songs from the backend instead of local storage. Remove any local-only song persistence fallback.",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-three-ocarina-size-presets-small-soprano-higher-octave-c6-c7-medium-default-current-c5-c6-range-and-large-alto-bass-lower-octave-c4-c5-that-control-which-octave-range-is-displayed-and-played-on-the-piano-keyboard-the-preset-selection-ui-should-be-accessible-from-the-main-interface-e-g-a-segmented-control-or-button-group-near-the-piano-keyboard-switching-presets-updates-both-the-visible-piano-keys-and-the-notes-generated-when-keys-are-clicked",
+      "title": "Add three ocarina size presets — Small (soprano, higher octave C6–C7), Medium (default, current C5–C6 range), and Large (alto/bass, lower octave C4–C5) — that control which octave range is displayed and played on the piano keyboard. The preset selection UI should be accessible from the main interface (e.g. a segmented control or button group near the piano keyboard). Switching presets updates both the visible piano keys and the notes generated when keys are clicked.",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-ocarina-sample-upload-feature-that-allows-users-to-upload-audio-recordings-wav-or-mp3-and-assign-each-recording-to-a-specific-note-in-the-current-octave-the-upload-and-assignment-ui-should-be-accessible-within-ocarinasettings-the-uploaded-samples-should-be-stored-as-base64-data-urls-in-localstorage-keyed-by-note-name",
+      "title": "Add an ocarina sample upload feature that allows users to upload audio recordings (WAV or MP3) and assign each recording to a specific note in the current octave. The upload and assignment UI should be accessible within OcarinaSettings. The uploaded samples should be stored as base64 data URLs in localStorage keyed by note name.",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-named-sample-presets-that-group-note-to-audio-sample-assignments-into-saveable-switchable-loadouts-users-can-create-a-new-preset-from-their-current-sample-assignments-give-it-a-name-and-switch-between-saved-presets-including-a-built-in-synth-preset-that-uses-the-synthesized-tones-presets-are-persisted-in-localstorage",
+      "title": "Implement named sample presets that group note-to-audio-sample assignments into saveable, switchable loadouts. Users can create a new preset from their current sample assignments, give it a name, and switch between saved presets (including a built-in 'Synth' preset that uses the synthesized tones). Presets are persisted in localStorage.",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-compositioncontrols-playback-to-use-the-active-sample-preset-during-composition-playback-when-a-custom-sample-preset-is-active-and-a-note-has-an-assigned-audio-recording-play-that-recording-instead-of-the-synthesized-tone-when-no-sample-is-assigned-for-a-note-in-the-active-preset-fall-back-to-synthesized-tone-playback",
+      "title": "Update CompositionControls playback to use the active sample preset during composition playback. When a custom sample preset is active and a note has an assigned audio recording, play that recording instead of the synthesized tone. When no sample is assigned for a note in the active preset, fall back to synthesized tone playback.",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-fingeringeditor-component-or-sampleuploadmanager-where-presets-are-created-when-the-user-clicks-save-as-preset-display-an-inline-text-input-field-directly-within-the-editor-ui-that-allows-the-user-to-type-a-name-for-the-new-preset-before-confirming-the-save-the-save-action-should-only-complete-once-a-non-empty-name-is-provided-this-replaces-any-previous-flow-that-skipped-naming-or-used-a-popup-dialog",
+      "title": "In the FingeringEditor component (or SampleUploadManager where presets are created), when the user clicks 'Save as Preset', display an inline text input field directly within the editor UI that allows the user to type a name for the new preset before confirming the save. The save action should only complete once a non-empty name is provided. This replaces any previous flow that skipped naming or used a popup dialog.",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-sheet-music-upload-feature-that-accepts-png-jpg-image-files-of-printed-sheet-music-when-an-image-is-uploaded-parse-extract-the-musical-notes-from-the-image-using-a-client-side-or-available-parsing-approach-convert-them-to-the-app-s-internal-note-format-pitch-duration-and-load-the-resulting-note-sequence-into-the-current-composition-so-the-app-can-play-it-back-on-the-ocarina",
+      "title": "Add a sheet music upload feature that accepts PNG/JPG image files of printed sheet music. When an image is uploaded, parse/extract the musical notes from the image using a client-side or available parsing approach, convert them to the app's internal note format (pitch, duration), and load the resulting note sequence into the current composition so the app can play it back on the ocarina.",
+      "reqIds": [
+        "REQ-63"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-sheet-music-upload-feature-that-accepts-musicxml-xml-musicxml-and-midi-mid-midi-file-formats-parse-the-file-client-side-to-extract-note-pitches-and-durations-map-them-to-the-ocarina-s-supported-note-range-clamping-or-transposing-notes-outside-the-current-preset-s-octave-range-and-load-the-resulting-sequence-into-the-current-composition-for-playback",
+      "title": "Add a sheet music upload feature that accepts MusicXML (.xml, .musicxml) and MIDI (.mid, .midi) file formats. Parse the file client-side to extract note pitches and durations, map them to the ocarina's supported note range (clamping or transposing notes outside the current preset's octave range), and load the resulting sequence into the current composition for playback.",
+      "reqIds": [
+        "REQ-64"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -592,6 +680,64 @@
     {
       "id": "AR-39",
       "summary": "Rotate the fingering model (OcarinaVisual play-along component) 90° clockwise (to the right)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-40",
+      "summary": "Allow adjusting the default ocarina model size (scale/zoom) in the OcarinaVisual play-along component",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-41",
+      "summary": "Allow adjusting the rotation angle of the ocarina model in the OcarinaVisual play-along component",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-45",
+      "summary": "Ensure the HolePositioningEditor (opened via the 'Position Holes' button in the main layout) correctly uses the uploaded photo as its background when one has been uploaded, so the user can visually align holes to their actual ocarina image. When no photo is uploaded, the stock grey ocarina image should be used as the editor background.",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-46",
+      "summary": "Replace localStorage song saving with Internet Computer backend persistence (online save/load), removing local-only storage",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-47",
+      "summary": "Add ocarina size presets (small/medium/large) that change the octave range played on the piano keyboard — small = higher octave, large = lower octave, medium = default C5–C6",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-48",
+      "summary": "Allow users to upload audio recordings of ocarina notes, assign each recording to a specific note, and save these sample loadouts as named presets switchable between synth tones and recorded samples",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-49",
+      "summary": "Implement a Motoko backend data model for storing ocarina songs with fields: id (Nat), title (Text), description (Text), notes array (each containing pitch: Text, duration: Text, timingPosition: Nat), and lyrics (Text). Implement full CRUD operations: createSong, getSong(id), updateSong(id, data), deleteSong(id), and listSongs returning all saved songs.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-50",
+      "summary": "When saving a custom fingering preset, show an inline text field in the fingering editor for the user to name the preset before saving",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-51",
+      "summary": "Allow users to upload sheet music (PNG/JPG image via vision AI recognition, or MusicXML/MIDI file) and have the app parse the notes and play them back on the ocarina",
       "reqIds": [],
       "status": "pending"
     }

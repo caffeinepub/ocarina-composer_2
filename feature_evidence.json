@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-clearly-visible-position-holes-button-directly-on-or-immediately-below-the-ocarinavisual-play-along-component-in-the-main-app-layout-so-users-can-access-hole-positioning-without-navigating-into-the-settings-modal",
-      "featureTitle": "Add a clearly visible 'Position Holes' button directly on or immediately below the OcarinaVisual play-along component in the main App layout, so users can access hole positioning without navigating into the Settings modal.",
+      "featureId": "feature-in-the-fingeringeditor-component-or-sampleuploadmanager-where-presets-are-created-when-the-user-clicks-save-as-preset-display-an-inline-text-input-field-directly-within-the-editor-ui-that-allows-the-user-to-type-a-name-for-the-new-preset-before-confirming-the-save-the-save-action-should-only-complete-once-a-non-empty-name-is-provided-this-replaces-any-previous-flow-that-skipped-naming-or-used-a-popup-dialog",
+      "featureTitle": "In the FingeringEditor component (or SampleUploadManager where presets are created), when the user clicks 'Save as Preset', display an inline text input field directly within the editor UI that allows the user to type a name for the new preset before confirming the save. The save action should only complete once a non-empty name is provided. This replaces any previous flow that skipped naming or used a popup dialog.",
       "files": [
-        "frontend/src/App.tsx"
+        "frontend/src/components/FingeringEditor.tsx",
+        "frontend/src/components/SampleUploadManager.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -13,19 +14,21 @@
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
+        "blob-storage@4.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-49"
+        "REQ-62"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-when-the-position-holes-button-is-clicked-open-the-holepositioningeditor-component-as-a-modal-or-inline-overlay-directly-on-the-ocarinavisual-component-so-the-user-can-drag-and-reposition-each-of-the-4-holes-left-index-left-middle-right-index-right-middle-on-the-current-ocarina-background-stock-photo-or-uploaded-photo-without-leaving-the-main-view",
-      "featureTitle": "When the 'Position Holes' button is clicked, open the HolePositioningEditor component as a modal or inline overlay directly on the OcarinaVisual component, so the user can drag and reposition each of the 4 holes (left index, left middle, right index, right middle) on the current ocarina background (stock photo or uploaded photo) without leaving the main view.",
+      "featureId": "feature-add-a-sheet-music-upload-feature-that-accepts-png-jpg-image-files-of-printed-sheet-music-when-an-image-is-uploaded-parse-extract-the-musical-notes-from-the-image-using-a-client-side-or-available-parsing-approach-convert-them-to-the-app-s-internal-note-format-pitch-duration-and-load-the-resulting-note-sequence-into-the-current-composition-so-the-app-can-play-it-back-on-the-ocarina",
+      "featureTitle": "Add a sheet music upload feature that accepts PNG/JPG image files of printed sheet music. When an image is uploaded, parse/extract the musical notes from the image using a client-side or available parsing approach, convert them to the app's internal note format (pitch, duration), and load the resulting note sequence into the current composition so the app can play it back on the ocarina.",
       "files": [
         "frontend/src/App.tsx",
-        "frontend/src/components/HolePositioningEditor.tsx"
+        "frontend/src/components/SheetMusicUpload.tsx",
+        "frontend/src/utils/sheetMusicParser.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -33,19 +36,22 @@
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
+        "blob-storage@4.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-50"
+        "REQ-63"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-the-holepositioningeditor-opened-from-the-ocarinavisual-context-uses-the-stock-grey-ocarina-image-as-the-background-by-default-when-no-user-photo-has-been-uploaded-matching-the-background-currently-displayed-by-ocarinavisual-so-the-user-can-visually-align-holes-to-the-actual-image",
-      "featureTitle": "Ensure the HolePositioningEditor opened from the OcarinaVisual context uses the stock grey ocarina image as the background by default when no user photo has been uploaded, matching the background currently displayed by OcarinaVisual, so the user can visually align holes to the actual image.",
+      "featureId": "feature-add-a-sheet-music-upload-feature-that-accepts-musicxml-xml-musicxml-and-midi-mid-midi-file-formats-parse-the-file-client-side-to-extract-note-pitches-and-durations-map-them-to-the-ocarina-s-supported-note-range-clamping-or-transposing-notes-outside-the-current-preset-s-octave-range-and-load-the-resulting-sequence-into-the-current-composition-for-playback",
+      "featureTitle": "Add a sheet music upload feature that accepts MusicXML (.xml, .musicxml) and MIDI (.mid, .midi) file formats. Parse the file client-side to extract note pitches and durations, map them to the ocarina's supported note range (clamping or transposing notes outside the current preset's octave range), and load the resulting sequence into the current composition for playback.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/HolePositioningEditor.tsx"
+        "frontend/src/components/SheetMusicUpload.tsx",
+        "frontend/src/utils/midiParser.ts",
+        "frontend/src/utils/musicXMLParser.ts",
+        "frontend/src/utils/noteTransposer.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -53,10 +59,11 @@
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
+        "blob-storage@4.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-51"
+        "REQ-64"
       ],
       "confidence": "high"
     }
